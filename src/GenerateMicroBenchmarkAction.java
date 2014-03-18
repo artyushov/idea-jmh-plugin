@@ -38,22 +38,29 @@ public class GenerateMicroBenchmarkAction extends AnAction {
         if (editor == null) {
             return;
         }
-        PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
+        final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getPsiClassFromContext(e);
         Template template = BenchmarkMethodTemplate.create(psiClass);
-        PsiMethod method = generateDummyMethod(editor, psiFile);
-        if (method == null) {
-            return;
-        }
-        final TextRange range = method.getTextRange();
-        editor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), "");
-        editor.getCaretModel().moveToOffset(range.getStartOffset());
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            @Override
+            public void run() {
+                final PsiMethod method = generateDummyMethod(editor, psiFile);
+                if (method == null) {
+                    return;
+                }
+
+                TextRange range = method.getTextRange();
+                editor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), "");
+                editor.getCaretModel().moveToOffset(range.getStartOffset());
+            }
+        });
 
         TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
                 ApplicationManager.getApplication().runWriteAction(new Runnable() {
                     public void run() {
+
                         PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
                         PsiFile psi = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
                         if (psi == null) {

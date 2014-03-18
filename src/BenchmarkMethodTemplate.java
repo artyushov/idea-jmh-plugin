@@ -21,7 +21,7 @@ public class BenchmarkMethodTemplate {
         template.addTextSegment(" measure");
         Expression nameExpr = new ConstantNode("Name");
         template.addVariable("name", nameExpr, nameExpr, true);
-        template.addTextSegment("() {\n\n}");
+        template.addTextSegment("() {\n}");
 
         template.setToIndent(true);
         template.setToReformat(true);
