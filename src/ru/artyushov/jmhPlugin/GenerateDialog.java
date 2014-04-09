@@ -1,3 +1,5 @@
+package ru.artyushov.jmhPlugin;
+
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;
 import org.jetbrains.annotations.Nullable;

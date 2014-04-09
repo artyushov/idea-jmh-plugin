@@ -1,3 +1,5 @@
+package ru.artyushov.jmhPlugin;
+
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils;
 import com.intellij.codeInsight.generation.GenerateMembersUtil;
