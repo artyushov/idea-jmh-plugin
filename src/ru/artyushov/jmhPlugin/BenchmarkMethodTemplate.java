@@ -1,3 +1,5 @@
+package ru.artyushov.jmhPlugin;
+
 import com.intellij.codeInsight.template.Expression;
 import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;

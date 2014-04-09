@@ -37,8 +37,7 @@
   </project-components>
 
   <actions>
-    <!-- Add your actions here -->
-      <action id="generateMicroBenchmark" class="GenerateMicroBenchmarkAction" text="Generate micro benchmark..."
+      <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.GenerateMicroBenchmarkAction" text="Generate micro benchmark..."
               description="Generates benchmark">
           <add-to-group group-id="GenerateGroup" anchor="last"/>
       </action>
