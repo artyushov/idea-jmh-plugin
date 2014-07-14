@@ -26,7 +26,7 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
-        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationProducer"/>
+        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhMethodConfigurationProducer"/>
     </extensions>
 
     <application-components>
@@ -38,7 +38,7 @@
     </project-components>
 
     <actions>
-        <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.GenerateMicroBenchmarkAction"
+        <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.action.GenerateMicroBenchmarkAction"
                 text="Generate micro benchmark..."
                 description="Generates benchmark">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
