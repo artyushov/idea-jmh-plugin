@@ -1,4 +1,4 @@
-package ru.artyushov.jmhPlugin;
+package ru.artyushov.jmhPlugin.action;
 
 import com.intellij.codeInsight.CodeInsightUtilCore;
 import com.intellij.codeInsight.daemon.impl.quickfix.CreateFromUsageUtils;

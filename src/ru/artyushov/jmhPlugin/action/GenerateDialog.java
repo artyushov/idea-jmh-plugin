@@ -1,4 +1,4 @@
-package ru.artyushov.jmhPlugin;
+package ru.artyushov.jmhPlugin.action;
 
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.PsiClass;

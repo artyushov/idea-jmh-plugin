@@ -9,6 +9,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,13 +76,24 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Nullable
     @Override
     public String getRunClass() {
-        return "org.openjdk.jmh.Main";
+        return JMH_START_CLASS;
     }
 
     @Nullable
     @Override
     public String getPackage() {
         return null;
+    }
+
+    public boolean beMethodConfiguration(final Location<PsiMethod> methodLocation) {
+        PsiMethod method = methodLocation.getPsiElement();
+        PsiClass containingClass = method.getContainingClass();
+        if (containingClass == null) {
+            return false;
+        }
+        setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
+        setName(containingClass.getName() + "." + method.getName());
+        return true;
     }
 
     @Override

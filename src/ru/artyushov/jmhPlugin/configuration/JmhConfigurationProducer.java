@@ -19,7 +19,8 @@ import java.util.Iterator;
  * Date: 09/04/14
  * Time: 18:45
  */
-public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
+@SuppressWarnings("UnusedDeclaration")
+public abstract class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
 
     public JmhConfigurationProducer(ConfigurationType configurationType) {
         super(configurationType);
