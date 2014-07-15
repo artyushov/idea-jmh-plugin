@@ -30,7 +30,5 @@ public abstract class JmhConfigurationProducer extends JavaRunConfigurationProdu
                                                     Ref<PsiElement> sourceElement);
 
     @Override
-    public boolean isConfigurationFromContext(JmhConfiguration jmhConfiguration, ConfigurationContext configurationContext) {
-        return false;
-    }
+    public abstract boolean isConfigurationFromContext(JmhConfiguration jmhConfiguration, ConfigurationContext configurationContext);
 }
