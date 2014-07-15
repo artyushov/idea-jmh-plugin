@@ -27,6 +27,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhMethodConfigurationProducer"/>
+        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhClassConfigurationProducer"/>
     </extensions>
 
     <application-components>
