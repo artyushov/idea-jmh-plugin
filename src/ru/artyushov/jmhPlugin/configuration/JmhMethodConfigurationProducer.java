@@ -4,6 +4,7 @@ import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 
@@ -23,14 +24,22 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (methodLocation == null) {
             return false;
         }
-        sourceElement.set(methodLocation.getPsiElement());
+        PsiMethod method = methodLocation.getPsiElement();
+        sourceElement.set(method);
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
 
-        configuration.beMethodConfiguration(methodLocation);
+        if (!ConfigurationUtils.hasBenchmarkAnnotation(method)) {
+            return false;
+        }
+        PsiClass containingClass = method.getContainingClass();
+        if (containingClass == null) {
+            return false;
+        }
+        configuration.setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
+        configuration.setName(containingClass.getName() + "." + method.getName());
         return true;
-
     }
 
     private static Location<PsiMethod> getTestMethod(final Location<?> location) {

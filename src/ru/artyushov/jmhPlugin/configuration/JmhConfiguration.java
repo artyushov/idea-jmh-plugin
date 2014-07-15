@@ -25,7 +25,12 @@ import java.util.Map;
 public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
         implements CommonJavaRunConfigurationParameters {
 
+    public static enum Type {
+        METHOD, CLASS
+    }
+
     public static final String JMH_START_CLASS = "org.openjdk.jmh.Main";
+    public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.GenerateMicroBenchmark";
 
     private String vmParameters;
     private boolean isAlternaticeJrePathEnabled = false;
@@ -34,6 +39,8 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     private String workingDirectory;
     private Map<String, String> envs = Maps.newHashMap();
     private boolean passParentEnvs;
+
+    private Type type;
 
     public JmhConfiguration(final String name, final Project project, ConfigurationFactory configurationFactory) {
         this(name, new JavaRunConfigurationModule(project, false), configurationFactory);
@@ -139,6 +146,10 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         return passParentEnvs;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
     @Override
     public Collection<Module> getValidModules() {
         return JavaRunConfigurationModule.getModulesForClass(getProject(), getRunClass());
@@ -157,6 +168,6 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
-        return new BenchmarkMethod(getProject(), this, executionEnvironment);
+        return new BenchmarkState(getProject(), this, executionEnvironment);
     }
 }

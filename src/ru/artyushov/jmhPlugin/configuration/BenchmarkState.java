@@ -17,12 +17,12 @@ import com.intellij.openapi.roots.ProjectRootManager;
  * Date: 14/07/14
  * Time: 21:36
  */
-public class BenchmarkMethod extends JavaCommandLineState implements JavaCommandLine {
+public class BenchmarkState extends JavaCommandLineState implements JavaCommandLine {
 
     private final Project project;
     private final JmhConfiguration configuration;
 
-    public BenchmarkMethod(Project project, JmhConfiguration configuration, ExecutionEnvironment environment) {
+    public BenchmarkState(Project project, JmhConfiguration configuration, ExecutionEnvironment environment) {
         super(environment);
         this.project = project;
         this.configuration = configuration;
