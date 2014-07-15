@@ -1,6 +1,5 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
@@ -21,11 +20,7 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
     @Override
     protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context,
                                                     Ref<PsiElement> sourceElement) {
-        Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
-        if (location == null) {
-            return false;
-        }
-        PsiClass benchmarkClass = getBenchmarkClass(location);
+        PsiClass benchmarkClass = getBenchmarkClass(context);
         if (benchmarkClass == null) {
             return false;
         }
@@ -38,7 +33,28 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         return true;
     }
 
-    public PsiClass getBenchmarkClass(final Location<?> location) {
+    @Override
+    public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        PsiClass benchmarkClass = getBenchmarkClass(context);
+        if (benchmarkClass == null) {
+            return false;
+        }
+        String nameFromContext = benchmarkClass.getName();
+        if (configuration.getName() == null || !configuration.getName().equals(nameFromContext)) {
+            return false;
+        }
+        setupConfigurationModule(context, configuration);
+        final Module originalModule = configuration.getConfigurationModule().getModule();
+        configuration.restoreOriginalModule(originalModule);
+
+        return true;
+    }
+
+    private PsiClass getBenchmarkClass(ConfigurationContext context) {
+        Location<?> location = context.getLocation();
+        if (location == null) {
+            return null;
+        }
         for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext();) {
             final Location<PsiClass> classLocation = iterator.next();
             if (hasBenchmarks(classLocation.getPsiElement())) {
@@ -48,7 +64,7 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         return null;
     }
 
-    public boolean hasBenchmarks(PsiClass psiClass) {
+    private boolean hasBenchmarks(PsiClass psiClass) {
         for (PsiMethod method : psiClass.getMethods()) {
             if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
                 return true;

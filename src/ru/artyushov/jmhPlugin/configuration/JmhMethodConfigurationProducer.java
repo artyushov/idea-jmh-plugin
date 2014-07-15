@@ -20,19 +20,15 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
     @Override
     protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context,
                                                     Ref<PsiElement> sourceElement) {
-        Location<PsiMethod> methodLocation = getTestMethod(context.getLocation());
-        if (methodLocation == null) {
+        PsiMethod method = getAnnotatedMethod(context);
+        if (method == null) {
             return false;
         }
-        PsiMethod method = methodLocation.getPsiElement();
         sourceElement.set(method);
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
 
-        if (!ConfigurationUtils.hasBenchmarkAnnotation(method)) {
-            return false;
-        }
         PsiClass containingClass = method.getContainingClass();
         if (containingClass == null) {
             return false;
@@ -42,13 +38,49 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         return true;
     }
 
-    private static Location<PsiMethod> getTestMethod(final Location<?> location) {
-        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
-        if (iterator.hasNext()) {
-            return iterator.next();
-        } else {
-            return null;
+    @Override
+    public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        PsiMethod method = getAnnotatedMethod(context);
+        if (method == null) {
+            return false;
         }
+        if (configuration.getName() == null || !configuration.getName().equals(getNameForConfiguration(method))) {
+            return false;
+        }
+        setupConfigurationModule(context, configuration);
+        final Module originalModule = configuration.getConfigurationModule().getModule();
+        configuration.restoreOriginalModule(originalModule);
+
+        return true;
     }
 
+
+
+    private PsiMethod getAnnotatedMethod(ConfigurationContext context) {
+        Location<?> location = context.getLocation();
+        if (location == null) {
+            return null;
+        }
+        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
+        Location<PsiMethod> methodLocation = null;
+        if (iterator.hasNext()) {
+            methodLocation = iterator.next();
+        }
+        if (methodLocation == null) {
+            return null;
+        }
+        PsiMethod method = methodLocation.getPsiElement();
+        if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
+            return method;
+        }
+        return null;
+    }
+
+    private String getNameForConfiguration(PsiMethod method) {
+        PsiClass clazz = method.getContainingClass();
+        if (clazz == null) {
+            return null;
+        }
+        return clazz.getQualifiedName() + "." + method.getName();
+    }
 }
