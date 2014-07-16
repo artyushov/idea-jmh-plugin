@@ -1,5 +1,6 @@
 package ru.artyushov.jmhPlugin.configuration;
 
+import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
@@ -30,11 +31,16 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         configuration.restoreOriginalModule(originalModule);
         configuration.setProgramParameters(benchmarkClass.getQualifiedName() + ".*");
         configuration.setName(benchmarkClass.getName());
+
+        configuration.setType(JmhConfiguration.Type.CLASS);
         return true;
     }
 
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        if (configuration.getBenchmarkType() != JmhConfiguration.Type.CLASS) {
+            return false;
+        }
         PsiClass benchmarkClass = getBenchmarkClass(context);
         if (benchmarkClass == null) {
             return false;
@@ -43,8 +49,12 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         if (configuration.getName() == null || !configuration.getName().equals(nameFromContext)) {
             return false;
         }
-        setupConfigurationModule(context, configuration);
+        Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
         final Module originalModule = configuration.getConfigurationModule().getModule();
+        if (location.getModule() == null || !location.getModule().equals(originalModule)) {
+            return false;
+        }
+        setupConfigurationModule(context, configuration);
         configuration.restoreOriginalModule(originalModule);
 
         return true;

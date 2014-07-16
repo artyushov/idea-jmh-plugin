@@ -1,5 +1,6 @@
 package ru.artyushov.jmhPlugin.configuration;
 
+import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
@@ -33,6 +34,8 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (containingClass == null) {
             return false;
         }
+
+        configuration.setType(JmhConfiguration.Type.METHOD);
         configuration.setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
         configuration.setName(containingClass.getName() + "." + method.getName());
         return true;
@@ -40,6 +43,9 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
 
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        if (configuration.getBenchmarkType() != JmhConfiguration.Type.METHOD) {
+            return false;
+        }
         PsiMethod method = getAnnotatedMethod(context);
         if (method == null) {
             return false;
@@ -47,8 +53,12 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (configuration.getName() == null || !configuration.getName().equals(getNameForConfiguration(method))) {
             return false;
         }
-        setupConfigurationModule(context, configuration);
+        Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
         final Module originalModule = configuration.getConfigurationModule().getModule();
+        if (location.getModule() == null || !location.getModule().equals(originalModule)) {
+            return false;
+        }
+        setupConfigurationModule(context, configuration);
         configuration.restoreOriginalModule(originalModule);
 
         return true;
@@ -81,6 +91,6 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (clazz == null) {
             return null;
         }
-        return clazz.getQualifiedName() + "." + method.getName();
+        return clazz.getName() + "." + method.getName();
     }
 }
