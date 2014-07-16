@@ -9,8 +9,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -92,17 +90,6 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         return null;
     }
 
-    public boolean beMethodConfiguration(final Location<PsiMethod> methodLocation) {
-        PsiMethod method = methodLocation.getPsiElement();
-        PsiClass containingClass = method.getContainingClass();
-        if (containingClass == null) {
-            return false;
-        }
-        setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
-        setName(containingClass.getName() + "." + method.getName());
-        return true;
-    }
-
     @Override
     public void setProgramParameters(@Nullable String s) {
         this.programParameters = s;
@@ -148,6 +135,10 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public Type getBenchmarkType() {
+        return type;
     }
 
     @Override
