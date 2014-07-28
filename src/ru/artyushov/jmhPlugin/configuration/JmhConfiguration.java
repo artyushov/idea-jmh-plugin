@@ -9,6 +9,9 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.InvalidDataException;
+import com.intellij.openapi.util.WriteExternalException;
+import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -149,7 +152,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
-        SettingsEditorGroup<JmhConfiguration> group = new SettingsEditorGroup<>();
+        SettingsEditorGroup<JmhConfiguration> group = new SettingsEditorGroup<JmhConfiguration>();
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JmhConfigurable());
         JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
         group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<JmhConfiguration>());
@@ -160,5 +163,32 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
         return new BenchmarkState(getProject(), this, executionEnvironment);
+    }
+
+    @Override
+    public void writeExternal(Element element) throws WriteExternalException {
+        super.writeExternal(element);
+        if (programParameters != null) {
+            element.setAttribute("program-parameters", programParameters);
+        }
+        if (workingDirectory != null) {
+            element.setAttribute("working-dir", workingDirectory);
+        }
+        if (type != null) {
+            element.setAttribute("benchmark-type", type.name());
+        }
+        writeModule(element);
+    }
+
+    @Override
+    public void readExternal(Element element) throws InvalidDataException {
+        super.readExternal(element);
+        setProgramParameters(element.getAttributeValue("program-parameters"));
+        setWorkingDirectory(element.getAttributeValue("working-dir"));
+        String typeString = element.getAttributeValue("benchmark-type");
+        if (typeString != null) {
+            setType(Type.valueOf(typeString));
+        }
+        readModule(element);
     }
 }

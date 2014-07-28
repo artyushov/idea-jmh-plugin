@@ -8,6 +8,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.util.PathUtil;
 
 import java.util.Iterator;
 
@@ -30,6 +31,7 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
         configuration.setProgramParameters(benchmarkClass.getQualifiedName() + ".*");
+        configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         configuration.setName(benchmarkClass.getName());
 
         configuration.setType(JmhConfiguration.Type.CLASS);
