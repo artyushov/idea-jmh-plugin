@@ -1,5 +1,6 @@
 package ru.artyushov.jmhPlugin.configuration;
 
+import com.intellij.execution.ui.CommonProgramParametersPanel;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
@@ -13,27 +14,24 @@ import javax.swing.*;
  */
 public class JmhConfigurable extends SettingsEditor<JmhConfiguration> {
 
-//    private JComponent anchor;
     private JPanel editor = new JPanel();
 
-//    @Override
-//    public JComponent getAnchor() {
-//        return anchor;
-//    }
-//
-//    @Override
-//    public void setAnchor(@Nullable JComponent anchor) {
-//        this.anchor = anchor;
-//    }
-//
+    private final CommonProgramParametersPanel commonProgramParameters;
+
+    public JmhConfigurable() {
+        editor.setLayout(new BoxLayout(editor, BoxLayout.X_AXIS));
+        commonProgramParameters = new CommonProgramParametersPanel();
+        editor.add(commonProgramParameters);
+    }
+
     @Override
     protected void resetEditorFrom(JmhConfiguration jmhConfiguration) {
-
+        commonProgramParameters.reset(jmhConfiguration);
     }
 
     @Override
     protected void applyEditorTo(JmhConfiguration jmhConfiguration) throws ConfigurationException {
-
+        commonProgramParameters.applyTo(jmhConfiguration);
     }
 
     @NotNull
