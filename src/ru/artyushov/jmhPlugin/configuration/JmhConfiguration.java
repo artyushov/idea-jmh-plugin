@@ -1,6 +1,5 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.google.common.collect.Maps;
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
 import com.intellij.execution.configurations.*;
@@ -16,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,14 +31,14 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     public static final String JMH_START_CLASS = "org.openjdk.jmh.Main";
-    public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.GenerateMicroBenchmark";
+    public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.Benchmark";
 
     private String vmParameters;
     private boolean isAlternaticeJrePathEnabled = false;
     private String alternativeJrePath;
     private String programParameters;
     private String workingDirectory;
-    private Map<String, String> envs = Maps.newHashMap();
+    private Map<String, String> envs = new HashMap<String, String>();
     private boolean passParentEnvs;
 
     private Type type;
@@ -117,13 +117,13 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
 
     @Override
     public void setEnvs(@NotNull Map<String, String> map) {
-        envs = Maps.newHashMap(map);
+        envs = new HashMap<String, String>(map);
     }
 
     @NotNull
     @Override
     public Map<String, String> getEnvs() {
-        return Maps.newHashMap(envs);
+        return new HashMap<String, String>(envs);
     }
 
     @Override

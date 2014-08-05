@@ -10,7 +10,9 @@ import com.intellij.codeInsight.template.TemplateEditingAdapter;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
@@ -43,20 +45,26 @@ public class GenerateMicroBenchmarkAction extends AnAction {
         final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getPsiClassFromContext(e);
         Template template = BenchmarkMethodTemplate.create(psiClass);
-        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-            @Override
-            public void run() {
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+          @Override
+          public void run() {
+
+            ApplicationManager.getApplication().runWriteAction(new Runnable() {
+              @Override
+              public void run() {
                 final PsiMethod method = generateDummyMethod(editor, psiFile);
                 if (method == null) {
-                    return;
+                  return;
                 }
 
                 TextRange range = method.getTextRange();
                 editor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), "");
                 editor.getCaretModel().moveToOffset(range.getStartOffset());
-            }
-        });
+              }
+            });
 
+          }
+        }, "", DocCommandGroupId.noneGroupId(editor.getDocument()));
         TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {

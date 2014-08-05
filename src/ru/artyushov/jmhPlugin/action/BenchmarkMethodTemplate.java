@@ -5,6 +5,7 @@ import com.intellij.codeInsight.template.Template;
 import com.intellij.codeInsight.template.TemplateManager;
 import com.intellij.codeInsight.template.impl.ConstantNode;
 import com.intellij.psi.PsiClass;
+import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
 
 /**
  * User: nikart
@@ -15,7 +16,7 @@ public class BenchmarkMethodTemplate {
 
     public static Template create(PsiClass psiClass) {
         Template template = TemplateManager.getInstance(psiClass.getProject()).createTemplate("", "");
-        template.addTextSegment("@org.openjdk.jmh.annotations.GenerateMicroBenchmark\n");
+        template.addTextSegment("@" + JmhConfiguration.JMH_ANNOTATION_NAME + "\n");
         template.addTextSegment("public ");
         Expression typeExpr = new ConstantNode("void");
         template.addVariable("type", typeExpr, typeExpr, true);
