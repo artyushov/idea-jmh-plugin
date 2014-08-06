@@ -40,6 +40,9 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
 
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        if (getAnnotatedMethod(context) != null) {
+            return false;
+        }
         if (configuration.getBenchmarkType() != JmhConfiguration.Type.CLASS) {
             return false;
         }
@@ -51,7 +54,11 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         if (configuration.getName() == null || !configuration.getName().equals(nameFromContext)) {
             return false;
         }
-        Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
+        Location locationFromContext = context.getLocation();
+        if (locationFromContext == null) {
+            return false;
+        }
+        Location location = JavaExecutionUtil.stepIntoSingleClass(locationFromContext);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         if (location.getModule() == null || !location.getModule().equals(originalModule)) {
             return false;
@@ -67,7 +74,7 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         if (location == null) {
             return null;
         }
-        for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext();) {
+        for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
             final Location<PsiClass> classLocation = iterator.next();
             if (hasBenchmarks(classLocation.getPsiElement())) {
                 return classLocation.getPsiElement();
@@ -75,6 +82,27 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         }
         return null;
     }
+
+    private PsiMethod getAnnotatedMethod(ConfigurationContext context) {
+        Location<?> location = context.getLocation();
+        if (location == null) {
+            return null;
+        }
+        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
+        Location<PsiMethod> methodLocation = null;
+        if (iterator.hasNext()) {
+            methodLocation = iterator.next();
+        }
+        if (methodLocation == null) {
+            return null;
+        }
+        PsiMethod method = methodLocation.getPsiElement();
+        if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
+            return method;
+        }
+        return null;
+    }
+
 
     private boolean hasBenchmarks(PsiClass psiClass) {
         for (PsiMethod method : psiClass.getMethods()) {

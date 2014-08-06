@@ -55,7 +55,11 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (configuration.getName() == null || !configuration.getName().equals(getNameForConfiguration(method))) {
             return false;
         }
-        Location location = JavaExecutionUtil.stepIntoSingleClass(context.getLocation());
+        Location locationFromContext = context.getLocation();
+        if (locationFromContext == null) {
+            return false;
+        }
+        Location location = JavaExecutionUtil.stepIntoSingleClass(locationFromContext);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         if (location.getModule() == null || !location.getModule().equals(originalModule)) {
             return false;
@@ -65,8 +69,6 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
 
         return true;
     }
-
-
 
     private PsiMethod getAnnotatedMethod(ConfigurationContext context) {
         Location<?> location = context.getLocation();
