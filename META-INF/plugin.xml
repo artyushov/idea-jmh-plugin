@@ -25,6 +25,7 @@
     -->
 
     <extensions defaultExtensionNs="com.intellij">
+        <deadCode implementation="ru.artyushov.jmhPlugin.configuration.JmhEntryPoint"/>
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhClassConfigurationProducer"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhMethodConfigurationProducer"/>
