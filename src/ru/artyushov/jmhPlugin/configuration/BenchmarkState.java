@@ -1,5 +1,7 @@
 package ru.artyushov.jmhPlugin.configuration;
 
+import com.intellij.compiler.CompilerConfiguration;
+import com.intellij.compiler.CompilerConfigurationImpl;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLine;
 import com.intellij.execution.configurations.JavaCommandLineState;
@@ -11,6 +13,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.ex.JavaSdkUtil;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
 
 /**
  * User: nikart
@@ -26,6 +29,14 @@ public class BenchmarkState extends JavaCommandLineState implements JavaCommandL
         super(environment);
         this.project = project;
         this.configuration = configuration;
+        Module module = configuration.getConfigurationModule().getModule();
+        if (module != null) {
+            CompilerConfigurationImpl compilerConfiguration =
+                    (CompilerConfigurationImpl) CompilerConfiguration.getInstance(module.getProject());
+            ProcessorConfigProfile processorConfigProfile = compilerConfiguration.getAnnotationProcessingConfiguration(module);
+            processorConfigProfile.setEnabled(true);
+            compilerConfiguration.getState();
+        }
     }
 
     @Override
