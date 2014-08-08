@@ -1,0 +1,5 @@
+Sample 1:
+mean(idea) = 3061.918 ops/us
+mean(term) = 3111.455 ops/us
+(mean(term) - mean(idea)) / mean(term) = 0.01592093
+p-value = 2.318e-10
