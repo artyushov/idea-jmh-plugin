@@ -1,5 +1,49 @@
-Sample 1:
+Sample 1: (10 forks 5 warmup iterations 20 iterations)
 mean(idea) = 3061.918 ops/us
 mean(term) = 3111.455 ops/us
 (mean(term) - mean(idea)) / mean(term) = 0.01592093
 p-value = 2.318e-10
+
+
+Sample 3: (10 forks 10 warmup iterations 20 iteration)
+Idea
+Benchmark                                       Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_03_States.measureShared      thrpt       200      646.612        0.962   ops/us
+o.o.j.s.JMHSample_03_States.measureUnshared    thrpt       200     1286.453        1.919   ops/us
+
+Terminal
+Benchmark                                       Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_03_States.measureShared      thrpt       200      647.623        7.489   ops/us
+o.o.j.s.JMHSample_03_States.measureUnshared    thrpt       200     1285.259        6.442   ops/us
+
+measureShared t.test: p-value = 0.6551
+measureUnshared t.test: p-value = 0.5537
+
+
+Sample 4: (10 forks 10 warmups 20 measurements)
+Idea
+Benchmark                                     Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_04_DefaultState.measure    thrpt       200      343.297        0.484   ops/us
+
+Term
+Benchmark                                     Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_04_DefaultState.measure    thrpt       200      344.958        0.636   ops/us
+
+(mean(term) - mean(idea)) / mean(term) = 0.004812504
+
+
+Sample 5: (10 forks 10 warmups 20 measurements)
+Idea
+Benchmark                                           Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_05_StateFixtures.measureRight    thrpt       200      342.592        0.498   ops/us
+
+Term
+Benchmark                                           Mode   Samples        Score  Score error    Units
+o.o.j.s.JMHSample_05_StateFixtures.measureRight    thrpt       200      344.934        0.624   ops/us
+
+(mean(term) - mean(idea)) / mean(term) = 0.006788147
+p-value < 2.2e-16
+
+(mean(term) - mean(idea)) / mean(term) = 0.01373365
+p-value < 1.459e-12
+
