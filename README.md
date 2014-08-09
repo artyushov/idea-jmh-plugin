@@ -16,7 +16,10 @@ Or just right click in your editor pane and select ```Generate micro benchmark``
 
 To run a separate benchmark method move the cursor to the method declaration and invoke ```Run``` action.
 In Mac OS it is ```Ctrl + Shift + F10```.
-Do the same actions to run all the benchmarks in a class, just move your cursor to the class declaration. 
+Do the same actions to run all the benchmarks in a class, just move your cursor to the class declaration.
+
+Invoking `Run` actions will create a new configuration with default parameters JMH provides. If you want to change these parameters just
+edit this configuration. By now it's not possible to set default parameters for all configurations.
 
 ## Doesn't it affect the quality of my benchmarks?
 
