@@ -4,7 +4,7 @@ Running with the following parameters: `-f 10 -wi 10 -i 20 -tu us`<br/>
 IDEA results:<br/>
 `average = 3061.918, stdev: 74.80403`<br/>
 Command line results:<br/>
-average: 3111.455, stdev: 77.44337<br/>
+`average: 3111.455, stdev: 77.44337`<br/>
 As we see, the difference in means is just 1.5%. Let's check that these distributions are not completely different.
 After subtracting mean from each sample and running [Kolmogorov-Smirnov](http://en.wikipedia.org/wiki/Kolmogorov–Smirnov_test) 
 test against them we do not reject the distribution equality hypothesis on significance level **0.05**.
