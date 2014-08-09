@@ -44,7 +44,7 @@ public class GenerateMicroBenchmarkAction extends AnAction {
         }
         final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getPsiClassFromContext(e);
-        Template template = BenchmarkMethodTemplate.create(psiClass);
+        Template template = BenchmarkMethodTemplateFactory.create(psiClass);
         createSpaceForNewMethod(project, editor, psiFile);
         TemplateEditingAdapter adapter = createTemplateApapter(new Runnable() {
             public void run() {

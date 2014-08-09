@@ -12,7 +12,7 @@ import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
  * Date: 18/03/14
  * Time: 13:01
  */
-public class BenchmarkMethodTemplate {
+public class BenchmarkMethodTemplateFactory {
 
     public static Template create(PsiClass psiClass) {
         Template template = TemplateManager.getInstance(psiClass.getProject()).createTemplate("", "");
