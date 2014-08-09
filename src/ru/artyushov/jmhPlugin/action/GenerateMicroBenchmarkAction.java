@@ -45,55 +45,40 @@ public class GenerateMicroBenchmarkAction extends AnAction {
         final PsiFile psiFile = PsiUtilBase.getPsiFileInEditor(editor, project);
         PsiClass psiClass = getPsiClassFromContext(e);
         Template template = BenchmarkMethodTemplate.create(psiClass);
-        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-          @Override
-          public void run() {
+        createSpaceForNewMethod(project, editor, psiFile);
+        TemplateEditingAdapter adapter = createTemplateApapter(new Runnable() {
+            public void run() {
 
-            ApplicationManager.getApplication().runWriteAction(new Runnable() {
-              @Override
-              public void run() {
-                final PsiMethod method = generateDummyMethod(editor, psiFile);
-                if (method == null) {
-                  return;
+                PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
+                PsiFile psi = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+                if (psi == null) {
+                    return;
                 }
+                PsiElement el = PsiTreeUtil.findElementOfClassAtOffset(psi, editor.getCaretModel().getOffset() - 1, PsiMethod.class, false);
 
-                TextRange range = method.getTextRange();
-                editor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), "");
-                editor.getCaretModel().moveToOffset(range.getStartOffset());
-              }
-            });
+                if (el == null) {
+                    return;
+                }
+                PsiMethod method = PsiTreeUtil.getParentOfType(el, PsiMethod.class, false);
+                if (method == null) {
+                    return;
+                }
+                if (method.findDeepestSuperMethods().length > 0) {
+                    GenerateMembersUtil.setupGeneratedMethod(method);
+                }
+                CreateFromUsageUtils.setupEditor(method, editor);
+            }
+        });
+        TemplateManager.getInstance(project).startTemplate(editor, template, adapter);
+    }
 
-          }
-        }, "", DocCommandGroupId.noneGroupId(editor.getDocument()));
-        TemplateEditingAdapter adapter = new TemplateEditingAdapter() {
+    private TemplateEditingAdapter createTemplateApapter(final Runnable runnable) {
+        return new TemplateEditingAdapter() {
             @Override
             public void templateFinished(Template template, boolean brokenOff) {
-                ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                    public void run() {
-
-                        PsiDocumentManager.getInstance(project).commitDocument(editor.getDocument());
-                        PsiFile psi = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-                        if (psi == null) {
-                            return;
-                        }
-                        PsiElement el = PsiTreeUtil.findElementOfClassAtOffset(psi, editor.getCaretModel().getOffset() - 1, PsiMethod.class, false);
-
-                        if (el != null) {
-                            PsiMethod method = PsiTreeUtil.getParentOfType(el, PsiMethod.class, false);
-                            if (method != null) {
-                                if (method.findDeepestSuperMethods().length > 0) {
-                                    GenerateMembersUtil.setupGeneratedMethod(method);
-                                }
-                                CreateFromUsageUtils.setupEditor(method, editor);
-                            }
-                        }
-                    }
-                });
-
+                ApplicationManager.getApplication().runWriteAction(runnable);
             }
         };
-
-        TemplateManager.getInstance(project).startTemplate(editor, template, adapter);
     }
 
     @Nullable
@@ -119,6 +104,29 @@ public class GenerateMicroBenchmarkAction extends AnAction {
         }
 
         return result;
+    }
+
+    private void createSpaceForNewMethod(Project project, final Editor editor, final PsiFile psiFile) {
+        CommandProcessor.getInstance().executeCommand(project, new Runnable() {
+            @Override
+            public void run() {
+
+                ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        final PsiMethod method = generateDummyMethod(editor, psiFile);
+                        if (method == null) {
+                            return;
+                        }
+
+                        TextRange range = method.getTextRange();
+                        editor.getDocument().replaceString(range.getStartOffset(), range.getEndOffset(), "");
+                        editor.getCaretModel().moveToOffset(range.getStartOffset());
+                    }
+                });
+
+            }
+        }, "", DocCommandGroupId.noneGroupId(editor.getDocument()));
     }
 
     private PsiClass getPsiClassFromContext(AnActionEvent e) {
