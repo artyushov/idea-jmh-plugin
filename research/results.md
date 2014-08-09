@@ -51,4 +51,4 @@ Benchmark        Mode   Samples        Score-Idea       Score-Term   (MAX - MIN)
 measureRight    thrpt        25     341193314.735    343132773.161             0.005   ops/s
 measureWrong    thrpt        25    3008081495.542   3077264376.682             0.022   ops/s
 ```
-### And so on...
+### If you want, you may continue this list :)
