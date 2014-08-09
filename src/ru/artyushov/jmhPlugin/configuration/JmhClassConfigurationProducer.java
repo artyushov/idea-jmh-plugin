@@ -33,14 +33,13 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         configuration.setProgramParameters(benchmarkClass.getQualifiedName() + ".*");
         configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         configuration.setName(benchmarkClass.getName());
-
         configuration.setType(JmhConfiguration.Type.CLASS);
         return true;
     }
 
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
-        if (getAnnotatedMethod(context) != null) {
+        if (ConfigurationUtils.getAnnotatedMethod(context) != null) {
             return false;
         }
         if (configuration.getBenchmarkType() != JmhConfiguration.Type.CLASS) {
@@ -82,27 +81,6 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         }
         return null;
     }
-
-    private PsiMethod getAnnotatedMethod(ConfigurationContext context) {
-        Location<?> location = context.getLocation();
-        if (location == null) {
-            return null;
-        }
-        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
-        Location<PsiMethod> methodLocation = null;
-        if (iterator.hasNext()) {
-            methodLocation = iterator.next();
-        }
-        if (methodLocation == null) {
-            return null;
-        }
-        PsiMethod method = methodLocation.getPsiElement();
-        if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
-            return method;
-        }
-        return null;
-    }
-
 
     private boolean hasBenchmarks(PsiClass psiClass) {
         for (PsiMethod method : psiClass.getMethods()) {

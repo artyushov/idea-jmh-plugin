@@ -10,8 +10,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.PathUtil;
 
-import java.util.Iterator;
-
 /**
  * User: nikart
  * Date: 14/07/14
@@ -22,7 +20,7 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
     @Override
     protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context,
                                                     Ref<PsiElement> sourceElement) {
-        PsiMethod method = getAnnotatedMethod(context);
+        PsiMethod method = ConfigurationUtils.getAnnotatedMethod(context);
         if (method == null) {
             return false;
         }
@@ -48,7 +46,7 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (configuration.getBenchmarkType() != JmhConfiguration.Type.METHOD) {
             return false;
         }
-        PsiMethod method = getAnnotatedMethod(context);
+        PsiMethod method = ConfigurationUtils.getAnnotatedMethod(context);
         if (method == null) {
             return false;
         }
@@ -68,26 +66,6 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         configuration.restoreOriginalModule(originalModule);
 
         return true;
-    }
-
-    private PsiMethod getAnnotatedMethod(ConfigurationContext context) {
-        Location<?> location = context.getLocation();
-        if (location == null) {
-            return null;
-        }
-        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
-        Location<PsiMethod> methodLocation = null;
-        if (iterator.hasNext()) {
-            methodLocation = iterator.next();
-        }
-        if (methodLocation == null) {
-            return null;
-        }
-        PsiMethod method = methodLocation.getPsiElement();
-        if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
-            return method;
-        }
-        return null;
     }
 
     private String getNameForConfiguration(PsiMethod method) {

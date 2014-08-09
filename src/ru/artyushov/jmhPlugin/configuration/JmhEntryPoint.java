@@ -22,7 +22,7 @@ public class JmhEntryPoint extends EntryPoint {
   @NotNull
   @Override
   public String getDisplayName() {
-    return "";
+    return "jmhEntryPoint";
   }
 
   @Override
