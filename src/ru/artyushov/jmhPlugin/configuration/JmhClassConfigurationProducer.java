@@ -26,7 +26,7 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         if (benchmarkClass == null) {
             return false;
         }
-        configuration.setName(benchmarkClass.getQualifiedName());
+        configuration.setBenchmarkClass(benchmarkClass.getQualifiedName());
 
         sourceElement.set(benchmarkClass);
         setupConfigurationModule(context, configuration);
