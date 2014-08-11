@@ -13,6 +13,8 @@ JUnit. Here are the features that are already implemented:
 
 First of all, you must have ```jmh-core``` and ```jmh-generator-annprocess``` on the classpath of your module.
 
+After that install the plugin. You can do this directly from IDEA — search for `JMH` in plugin repositories.
+
 Then you can use the plugin the same way you use JUnit. To generate a new benchmark method run ```Generate...``` action. In Mac OS it is ```Ctrl + N```
 Or just right click in your editor pane and select ```Generate micro benchmark```.
 
