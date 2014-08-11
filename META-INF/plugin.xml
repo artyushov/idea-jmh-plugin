@@ -29,7 +29,7 @@
 
     <actions>
         <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.action.GenerateMicroBenchmarkAction"
-                text="Generate micro benchmark"
+                text="Generate JMH benchmark"
                 description="Generates benchmark">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
