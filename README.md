@@ -30,4 +30,4 @@ Please, note that when running a benchmark Annotation processing is automaticall
 ## Doesn't it affect the quality of my benchmarks?
 
 A brief research shows that benchmark results *are* affected, but not that much. The whole research is described in
-`research/results`. Long story short, the maximum means difference observed was **2.2%**.
+[Research results](https://github.com/artyushov/idea-jmh-plugin/blob/master/research/results.md). Long story short, the maximum means difference observed was **2.2%**.
