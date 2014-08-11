@@ -2,6 +2,7 @@ package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
+import com.intellij.execution.configuration.CompatibilityAwareRunProfile;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.module.Module;
@@ -24,7 +25,7 @@ import java.util.Map;
  * Time: 18:46
  */
 public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
-        implements CommonJavaRunConfigurationParameters {
+        implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile {
 
     public static enum Type {
         METHOD, CLASS
@@ -203,5 +204,10 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
             setType(Type.valueOf(typeString));
         }
         readModule(element);
+    }
+
+    @Override
+    public boolean mustBeStoppedToRun(@NotNull RunConfiguration configuration) {
+        return JmhConfigurationType.TYPE_ID.equals(configuration.getType().getId());
     }
 }

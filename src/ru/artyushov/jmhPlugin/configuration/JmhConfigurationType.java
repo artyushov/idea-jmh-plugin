@@ -13,11 +13,11 @@ import com.intellij.openapi.project.Project;
  */
 public class JmhConfigurationType extends ConfigurationTypeBase {
 
-    private final ConfigurationFactory myFactory;
+    public static final String TYPE_ID = "jmh-id";
 
     public JmhConfigurationType() {
-        super("jmh-id", "jmh-display-name", "jmh-description", AllIcons.RunConfigurations.Application);
-        myFactory = new ConfigurationFactory(this) {
+        super(TYPE_ID, "jmh-display-name", "jmh-description", AllIcons.RunConfigurations.Application);
+        ConfigurationFactory myFactory = new ConfigurationFactory(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
                 return new JmhConfiguration("jmh-configuration-name", project, this);
             }
