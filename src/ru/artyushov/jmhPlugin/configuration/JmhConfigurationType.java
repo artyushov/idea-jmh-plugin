@@ -16,7 +16,7 @@ public class JmhConfigurationType extends ConfigurationTypeBase {
     public static final String TYPE_ID = "jmh-id";
 
     public JmhConfigurationType() {
-        super(TYPE_ID, "jmh-display-name", "jmh-description", AllIcons.RunConfigurations.Application);
+        super(TYPE_ID, "Jmh", "", AllIcons.RunConfigurations.Application);
         ConfigurationFactory myFactory = new ConfigurationFactory(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
                 return new JmhConfiguration("jmh-configuration-name", project, this);
