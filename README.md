@@ -21,7 +21,9 @@ Do the same actions to run all the benchmarks in a class, just move your cursor 
 Invoking `Run` actions will create a new configuration with default parameters JMH provides. If you want to change these parameters just
 edit this configuration. By now it's not possible to set default parameters for all configurations.
 
+Please, note that when running a benchmark Annotation processing is automatically enabled in your IDE.
+
 ## Doesn't it affect the quality of my benchmarks?
 
 A brief research shows that benchmark results *are* affected, but not that much. The whole research is described in
-`research/results`. Long story short, the maximum difference observed was **2.2%**.
+`research/results`. Long story short, the maximum means difference observed was **2.2%**.
