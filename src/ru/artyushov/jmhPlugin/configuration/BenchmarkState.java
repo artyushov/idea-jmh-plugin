@@ -48,7 +48,7 @@ public class BenchmarkState extends CommandLineState {
         parameters.setMainClass(JmhConfiguration.JMH_START_CLASS);
 
         int classPathType = removeJdkClasspath(JavaParametersUtil.getClasspathType(configuration.getConfigurationModule(),
-                JmhConfiguration.JMH_START_CLASS, true));
+                configuration.getBenchmarkClass(), true));
         JavaParametersUtil.configureModule(configuration.getConfigurationModule(), parameters, classPathType, null);
 
         Module module = configuration.getConfigurationModule().getModule();

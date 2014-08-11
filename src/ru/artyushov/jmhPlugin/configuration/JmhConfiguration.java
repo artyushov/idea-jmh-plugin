@@ -40,6 +40,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     private String workingDirectory;
     private Map<String, String> envs = new HashMap<String, String>();
     private boolean passParentEnvs;
+    private String benchmarkClass;
 
     private Type type;
 
@@ -144,6 +145,14 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         return type;
     }
 
+    public void setBenchmarkClass(String benchmarkClass) {
+        this.benchmarkClass = benchmarkClass;
+    }
+
+    public String getBenchmarkClass() {
+        return benchmarkClass;
+    }
+
     @Override
     public Collection<Module> getValidModules() {
         return JavaRunConfigurationModule.getModulesForClass(getProject(), getRunClass());
@@ -177,6 +186,9 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (type != null) {
             element.setAttribute("benchmark-type", type.name());
         }
+        if (benchmarkClass != null) {
+            element.setAttribute("benchmark-class", benchmarkClass);
+        }
         writeModule(element);
     }
 
@@ -185,6 +197,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         super.readExternal(element);
         setProgramParameters(element.getAttributeValue("program-parameters"));
         setWorkingDirectory(element.getAttributeValue("working-dir"));
+        setBenchmarkClass(element.getAttributeValue("benchmark-class"));
         String typeString = element.getAttributeValue("benchmark-type");
         if (typeString != null) {
             setType(Type.valueOf(typeString));

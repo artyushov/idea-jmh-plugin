@@ -26,6 +26,8 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         if (benchmarkClass == null) {
             return false;
         }
+        configuration.setName(benchmarkClass.getQualifiedName());
+
         sourceElement.set(benchmarkClass);
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
@@ -46,7 +48,8 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
             return false;
         }
         PsiClass benchmarkClass = getBenchmarkClass(context);
-        if (benchmarkClass == null) {
+        if (benchmarkClass == null || benchmarkClass.getQualifiedName() == null ||
+                !benchmarkClass.getQualifiedName().equals(configuration.getBenchmarkClass())) {
             return false;
         }
         String nameFromContext = benchmarkClass.getName();

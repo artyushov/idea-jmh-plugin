@@ -33,7 +33,7 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         if (containingClass == null) {
             return false;
         }
-
+        configuration.setBenchmarkClass(containingClass.getQualifiedName());
         configuration.setType(JmhConfiguration.Type.METHOD);
         configuration.setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
         configuration.setName(containingClass.getName() + "." + method.getName());
@@ -48,6 +48,11 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         }
         PsiMethod method = ConfigurationUtils.getAnnotatedMethod(context);
         if (method == null) {
+            return false;
+        }
+        if (method.getContainingClass() == null
+                || method.getContainingClass().getQualifiedName() == null
+                || !method.getContainingClass().getQualifiedName().equals(configuration.getBenchmarkClass())) {
             return false;
         }
         if (configuration.getName() == null || !configuration.getName().equals(getNameForConfiguration(method))) {
