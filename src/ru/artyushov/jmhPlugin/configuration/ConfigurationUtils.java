@@ -13,8 +13,16 @@ import java.util.Iterator;
  */
 public class ConfigurationUtils {
 
+    public static final String SETUP_ANNOTATION = "org.openjdk.jmh.annotations.Setup";
+    public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
+
     public static boolean hasBenchmarkAnnotation(PsiMethod method) {
         return method.getModifierList().findAnnotation(JmhConfiguration.JMH_ANNOTATION_NAME) != null;
+    }
+
+    public static boolean hasSetupOrTearDownAnnotation(PsiMethod method) {
+        return method.getModifierList().findAnnotation(SETUP_ANNOTATION) != null ||
+                method.getModifierList().findAnnotation(TEAR_DOWN_ANNOTATION) != null;
     }
 
     public static PsiMethod getAnnotatedMethod(ConfigurationContext context) {

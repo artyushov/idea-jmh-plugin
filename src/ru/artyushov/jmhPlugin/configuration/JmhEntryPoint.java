@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: nikart
@@ -44,7 +45,8 @@ public class JmhEntryPoint extends EntryPoint {
 
       if (psiElement instanceof PsiMethod) {
         final PsiMethod method = (PsiMethod)psiElement;
-        if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
+        if (ConfigurationUtils.hasBenchmarkAnnotation(method)
+                || ConfigurationUtils.hasSetupOrTearDownAnnotation(method)) {
           return true;
         }
       }
@@ -70,5 +72,11 @@ public class JmhEntryPoint extends EntryPoint {
   @Override
   public void writeExternal(Element element) throws WriteExternalException {
     element.setAttribute("isSelected", isSelected + "");
+  }
+
+  @Nullable
+  @Override
+  public String[] getIgnoreAnnotations() {
+    return super.getIgnoreAnnotations();
   }
 }
