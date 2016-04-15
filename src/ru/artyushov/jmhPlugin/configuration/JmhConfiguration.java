@@ -27,7 +27,7 @@ import java.util.Map;
 public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
         implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile {
 
-    public static enum Type {
+    public enum Type {
         METHOD, CLASS
     }
 
@@ -35,7 +35,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.Benchmark";
 
     private String vmParameters;
-    private boolean isAlternaticeJrePathEnabled = false;
+    private boolean isAlternativeJrePathEnabled = false;
     private String alternativeJrePath;
     private String programParameters;
     private String workingDirectory;
@@ -65,12 +65,12 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
 
     @Override
     public boolean isAlternativeJrePathEnabled() {
-        return isAlternaticeJrePathEnabled;
+        return isAlternativeJrePathEnabled;
     }
 
     @Override
     public void setAlternativeJrePathEnabled(boolean b) {
-        this.isAlternaticeJrePathEnabled = b;
+        this.isAlternativeJrePathEnabled = b;
     }
 
     @Override
