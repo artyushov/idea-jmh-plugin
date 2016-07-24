@@ -19,6 +19,7 @@
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhClassConfigurationProducer"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhMethodConfigurationProducer"/>
+        <runLineMarkerContributor language="JAVA" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
     </extensions>
 
     <application-components>
