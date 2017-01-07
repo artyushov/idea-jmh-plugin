@@ -33,7 +33,9 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
         configuration.setProgramParameters(benchmarkClass.getQualifiedName() + ".*");
-        configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
+        if (configuration.getWorkingDirectory() == null) {  // respect default working directory if set
+            configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
+        }
         configuration.setName(benchmarkClass.getName());
         configuration.setType(JmhConfiguration.Type.CLASS);
         return true;
