@@ -35,7 +35,8 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
         }
         configuration.setBenchmarkClass(containingClass.getQualifiedName());
         configuration.setType(JmhConfiguration.Type.METHOD);
-        configuration.setProgramParameters(containingClass.getQualifiedName() + "." + method.getName());
+        configuration.setProgramParameters(
+                createProgramParameters(containingClass.getQualifiedName() + "." + method.getName(), configuration.getProgramParameters()));
         configuration.setName(containingClass.getName() + "." + method.getName());
         configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         return true;
