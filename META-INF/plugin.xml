@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <id>ru.artyushov</id>
     <name>JMH plugin</name>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <vendor email="nikita.artyushov@gmail.com" url="https://github.com/artyushov/idea-jmh-plugin">Nikita Artyushov</vendor>
 
     <description><![CDATA[
