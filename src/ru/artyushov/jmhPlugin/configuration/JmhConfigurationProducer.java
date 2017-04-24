@@ -31,4 +31,8 @@ public abstract class JmhConfigurationProducer extends JavaRunConfigurationProdu
 
     @Override
     public abstract boolean isConfigurationFromContext(JmhConfiguration jmhConfiguration, ConfigurationContext configurationContext);
+
+    String createProgramParameters(String generatedParams, String defaultParams) {
+        return defaultParams != null ? generatedParams + " " + defaultParams : generatedParams;
+    }
 }
