@@ -27,6 +27,12 @@ import java.util.Map;
 public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
         implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile {
 
+    public static final String ATTR_VM_PARAMETERS = "vm-parameters";
+    public static final String ATTR_PROGRAM_PARAMETERS = "program-parameters";
+    public static final String ATTR_WORKING_DIR = "working-dir";
+    public static final String ATTR_BENCHMARK_TYPE = "benchmark-type";
+    public static final String ATTR_BENCHMARK_CLASS = "benchmark-class";
+
     public enum Type {
         METHOD, CLASS
     }
@@ -178,17 +184,20 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         super.writeExternal(element);
+        if (vmParameters != null) {
+            element.setAttribute(ATTR_VM_PARAMETERS, vmParameters);
+        }
         if (programParameters != null) {
-            element.setAttribute("program-parameters", programParameters);
+            element.setAttribute(ATTR_PROGRAM_PARAMETERS, programParameters);
         }
         if (workingDirectory != null) {
-            element.setAttribute("working-dir", workingDirectory);
+            element.setAttribute(ATTR_WORKING_DIR, workingDirectory);
         }
         if (type != null) {
-            element.setAttribute("benchmark-type", type.name());
+            element.setAttribute(ATTR_BENCHMARK_TYPE, type.name());
         }
         if (benchmarkClass != null) {
-            element.setAttribute("benchmark-class", benchmarkClass);
+            element.setAttribute(ATTR_BENCHMARK_CLASS, benchmarkClass);
         }
         writeModule(element);
     }
@@ -196,10 +205,11 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        setProgramParameters(element.getAttributeValue("program-parameters"));
-        setWorkingDirectory(element.getAttributeValue("working-dir"));
-        setBenchmarkClass(element.getAttributeValue("benchmark-class"));
-        String typeString = element.getAttributeValue("benchmark-type");
+        setVMParameters(element.getAttributeValue(ATTR_VM_PARAMETERS));
+        setProgramParameters(element.getAttributeValue(ATTR_PROGRAM_PARAMETERS));
+        setWorkingDirectory(element.getAttributeValue(ATTR_WORKING_DIR));
+        setBenchmarkClass(element.getAttributeValue(ATTR_BENCHMARK_CLASS));
+        String typeString = element.getAttributeValue(ATTR_BENCHMARK_TYPE);
         if (typeString != null) {
             setType(Type.valueOf(typeString));
         }
