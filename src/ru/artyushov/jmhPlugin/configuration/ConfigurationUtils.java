@@ -2,6 +2,7 @@ package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
@@ -55,8 +56,27 @@ public class ConfigurationUtils {
         if (!(element instanceof PsiMethod))
             return false;
 
-        final PsiMethod method = (PsiMethod) element;
+        return isBenchmarkMethod((PsiMethod) element);
+    }
+
+    private static boolean isBenchmarkMethod(PsiMethod method) {
         return method.getContainingClass() != null && method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
+    public static boolean isBenchmarkClass(final PsiElement psiElement) {
+        if (!(psiElement instanceof PsiIdentifier))
+            return false;
+
+        final PsiElement element = psiElement.getParent();
+
+        return element instanceof PsiClass && containsBenchmarkMethod((PsiClass) element);
+    }
+
+    private static boolean containsBenchmarkMethod(final PsiClass aClass) {
+        final PsiMethod[] methods = aClass.getMethods();
+        for (final PsiMethod method : methods) {
+            if (isBenchmarkMethod(method)) return true;
+        }
+        return false;
+    }
 }

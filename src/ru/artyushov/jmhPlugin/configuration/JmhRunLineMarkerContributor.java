@@ -18,21 +18,36 @@ public class JmhRunLineMarkerContributor extends RunLineMarkerContributor {
     @Nullable
     @Override
     public Info getInfo(PsiElement psiElement) {
-        if (!ConfigurationUtils.isBenchmarkMethod(psiElement))
-          return null;
+        boolean isBenchmarkMethod = ConfigurationUtils.isBenchmarkMethod(psiElement);
+        if (isBenchmarkMethod) {
+            final AnAction[] actions = ExecutorAction.getActions(0);
+            return new Info(AllIcons.RunConfigurations.TestState.Run, new TooltipProvider(actions), actions);
+        }
 
-        final AnAction[] actions = ExecutorAction.getActions(0);
-        return new Info(AllIcons.RunConfigurations.TestState.Run, new Function<PsiElement, String>() {
-            @Override
-            public String fun(final PsiElement element) {
-                return StringUtil.join(ContainerUtil.mapNotNull(actions, new Function<AnAction, String>() {
-                  @Override
-                  public String fun(AnAction action) {
-                      return getText(action, element);
-                  }
-                }), "\n");
-            }
-        }, actions);
+        boolean isBenchmarkClass = ConfigurationUtils.isBenchmarkClass(psiElement);
+        if (isBenchmarkClass) {
+            final AnAction[] actions = ExecutorAction.getActions(0);
+            return new Info(AllIcons.RunConfigurations.TestState.Run_run, new TooltipProvider(actions), actions);
+        }
+
+        return null;
     }
 
+    private static class TooltipProvider implements com.intellij.util.Function<PsiElement, String> {
+        private final AnAction[] actions;
+
+        private TooltipProvider(AnAction[] actions) {
+            this.actions = actions;
+        }
+
+        @Override
+        public String fun(PsiElement element) {
+            return StringUtil.join(ContainerUtil.mapNotNull(actions, new Function<AnAction, String>() {
+                @Override
+                public String fun(AnAction action) {
+                    return getText(action, element);
+                }
+            }), "\n");
+        }
+    }
 }
