@@ -24,7 +24,7 @@ import java.util.Map;
  * Date: 09/04/14
  * Time: 18:46
  */
-public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule>
+public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule, Object>
         implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile {
 
     public static final String ATTR_VM_PARAMETERS = "vm-parameters";

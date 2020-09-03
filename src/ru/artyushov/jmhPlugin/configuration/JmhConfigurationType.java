@@ -19,7 +19,9 @@ public class JmhConfigurationType extends ConfigurationTypeBase {
         super(TYPE_ID, "Jmh", "", AllIcons.RunConfigurations.Application);
         ConfigurationFactory myFactory = new ConfigurationFactory(this) {
             public RunConfiguration createTemplateConfiguration(Project project) {
-                return new JmhConfiguration("jmh-configuration-name", project, this);
+                JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", project, this);
+                configuration.setPassParentEnvs(true);
+                return configuration;
             }
         };
         addFactory(myFactory);
