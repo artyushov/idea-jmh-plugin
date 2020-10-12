@@ -9,6 +9,10 @@
     ]]></description>
 
     <change-notes><![CDATA[
+      <ul>
+         <li>Enable setting JVM options in runtime configuration</li>
+         <li>Add gutter icons for benchmark methods and containing class</li>
+      <ul>
     ]]>
     </change-notes>
 

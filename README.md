@@ -22,8 +22,8 @@ To run a separate benchmark method move the cursor to the method declaration and
 In Mac OS it is ```Ctrl + Shift + F10```.
 Do the same actions to run all the benchmarks in a class, just move your cursor to the class declaration.
 
-Invoking `Run` actions will create a new configuration with default parameters JMH provides. If you want to change these parameters just
-edit this configuration. By now it's not possible to set default parameters for all configurations.
+Invoking `Run` actions will create a new configuration with default parameters JMH provides. If you want to change these parameters just edit this configuration.
+To edit default parameters for all your benchmarks, modify the "JMH" run configuration template.
 
 Please, note that when running a benchmark Annotation processing is automatically enabled in your IDE.
 
@@ -31,3 +31,12 @@ Please, note that when running a benchmark Annotation processing is automaticall
 
 A brief research shows that benchmark results *are* affected, but not that much. The whole research is described in
 [Research results](https://github.com/artyushov/idea-jmh-plugin/blob/master/research/results.md). Long story short, the maximum means difference observed was **2.2%**.
+
+## Common problems
+
+Under Windows the following error might show up:
+
+    ERROR: org.openjdk.jmh.runner.RunnerException:
+    ERROR: Exception while trying to acquire the JMH lock (C:\WINDOWS\/jmh.lock):
+
+This is caused by running JMH benchmarks with an empty environment. To fix this error, define a `TMP` or `TEMP` environment variable which points to a writable directory. Alternatively, specify the JVM argument `java.io.tmpdir` and set it to a writable directory, for instance `-Djava.io.tmpdir=C:\temp`.
