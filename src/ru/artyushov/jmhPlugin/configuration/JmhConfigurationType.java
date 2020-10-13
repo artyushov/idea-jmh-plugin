@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 
-import static com.intellij.icons.AllIcons.RunConfigurations.Application;
+import static com.intellij.icons.AllIcons.Actions.ProfileYellow;
 
 /**
  * User: nikart
@@ -19,7 +19,7 @@ public class JmhConfigurationType extends SimpleConfigurationType {
     public static final String TYPE_ID = "jmh-id";
 
     public JmhConfigurationType() {
-        super(TYPE_ID, "Jmh", "Configuration to run a JMH benchmark", NotNullLazyValue.createValue(() -> Application));
+        super(TYPE_ID, "Jmh", "Configuration to run a JMH benchmark", NotNullLazyValue.createValue(() -> ProfileYellow));
     }
 
     @Override
