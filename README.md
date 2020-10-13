@@ -2,7 +2,7 @@
 
 ## Why do I need this?
 
-This is a plugin that allows you to use [JMH](http://openjdk.java.net/projects/code-tools/jmh/) in the same way as
+This is a plugin that allows you to use [JMH](https://github.com/openjdk/jmh) in the same way as
 JUnit. Here are the features that are already implemented:
 
 1. ```@Benchmark``` method generation
@@ -30,7 +30,7 @@ Please, note that when running a benchmark Annotation processing is automaticall
 ## Doesn't it affect the quality of my benchmarks?
 
 A brief research shows that benchmark results *are* affected, but not that much. The whole research is described in
-[Research results](https://github.com/artyushov/idea-jmh-plugin/blob/master/research/results.md). Long story short, the maximum means difference observed was **2.2%**.
+[Research results](./research/results.md). Long story short, the maximum means difference observed was **2.2%**.
 
 ## Common problems
 
@@ -40,3 +40,9 @@ Under Windows the following error might show up:
     ERROR: Exception while trying to acquire the JMH lock (C:\WINDOWS\/jmh.lock):
 
 This is caused by running JMH benchmarks with an empty environment. To fix this error, define a `TMP` or `TEMP` environment variable which points to a writable directory. Alternatively, specify the JVM argument `java.io.tmpdir` and set it to a writable directory, for instance `-Djava.io.tmpdir=C:\temp`.
+
+## Related projects
+
+ - [Gradle JMH Plugin](https://github.com/melix/jmh-gradle-plugin)
+ - [Jenkins JMH Plugin](https://github.com/brianfromoregon/jmh-plugin)
+ - [Teamcity JMH Plugin](https://github.com/presidentio/teamcity-plugin-jmh)

@@ -1,4 +1,4 @@
-### 1. [JMHSample_01_HelloWorld](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_01_HelloWorld.java)
+### 1. [JMHSample_01_HelloWorld](https://github.com/openjdk/jmh/blob/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_01_HelloWorld.java)
 
 Running with the following parameters: `-f 10 -wi 10 -i 20 -tu us`<br/>
 IDEA results:<br/>
@@ -11,7 +11,7 @@ test against them we do not reject the distribution equality hypothesis on signi
 
 Other benchmarks were not analysed as thoroughly, so I'll just present the means.
 
-### 2. [JMHSample_02_BenchmarkModes](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_02_BenchmarkModes.java)
+### 2. [JMHSample_02_BenchmarkModes](https://github.com/openjdk/jmh/blob/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_02_BenchmarkModes.java)
 
 ```
 Benchmark             Mode   Samples   Score-Idea   Score-Term  (MAX - MIN)/MAX     Units
@@ -29,22 +29,22 @@ measureMultiple         ss         5   100101.800   101094.600            0.009 
 measureSingleShot       ss         5   100184.000   100536.200            0.003        us
 ```
 
-### 3. [JMHSample_03_States](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_03_States.java)
-
+### 3. [JMHSample_03_States](https://github.com/openjdk/jmh/blob/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_03_States.java)
+blob/master/
 ```
 Benchmark           Mode   Samples       Score-Idea      Score-Term  (MAX - MIN)/MAX  Units
 measureShared      thrpt        25    644535828.753   647525817.305            0.004  ops/s
 measureUnshared    thrpt        25   1276415578.342  1296907288.469            0.015  ops/s
 ```
 
-### 4. [JMHSample_04_DefaultState](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_04_DefaultState.java)
+### 4. [JMHSample_04_DefaultState](https://github.com/openjdk/jmh/blob/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_04_DefaultState.java)
 
 ```
 Benchmark   Mode   Samples      Score-Idea      Score-Term   (MAX - MIN)/MAX   Units
 measure    thrpt        25   341919594.645   344548681.629             0.007   ops/s
 ```
 
-### 5. [JMHSample_05_StateFixtures](http://hg.openjdk.java.net/code-tools/jmh/file/tip/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_05_StateFixtures.java)
+### 5. [JMHSample_05_StateFixtures](https://github.com/openjdk/jmh/blob/master/jmh-samples/src/main/java/org/openjdk/jmh/samples/JMHSample_05_StateFixtures.java)
 
 ```
 Benchmark        Mode   Samples        Score-Idea       Score-Term   (MAX - MIN)/MAX   Units
