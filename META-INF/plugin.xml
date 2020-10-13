@@ -1,11 +1,13 @@
-<idea-plugin version="2">
+<idea-plugin url="https://github.com/artyushov/idea-jmh-plugin">
     <id>ru.artyushov</id>
-    <name>JMH plugin</name>
+    <name>JMH Java Microbenchmark Harness</name>
     <version>1.0.3</version>
     <vendor email="nikita.artyushov@gmail.com" url="https://github.com/artyushov/idea-jmh-plugin">Nikita Artyushov</vendor>
+    <category>Profiling</category>
 
     <description><![CDATA[
-      Plugin for generating and running JMH benchmarks from your IDE
+      <p>Plugin for generating and running JMH benchmarks from your IDE</p>
+      <p><a href="https://github.com/stokito/IdeaJol">Source code on GitHub</a></p>
     ]]></description>
 
     <change-notes><![CDATA[
@@ -17,6 +19,7 @@
     </change-notes>
 
     <idea-version since-build="131"/>
+    <depends>com.intellij.modules.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <deadCode implementation="ru.artyushov.jmhPlugin.configuration.JmhEntryPoint"/>
@@ -34,7 +37,7 @@
 
     <actions>
         <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.action.GenerateMicroBenchmarkAction"
-                text="Generate JMH benchmark"
+                text="Generate JMH Benchmark"
                 description="Generates benchmark">
             <add-to-group group-id="GenerateGroup" anchor="last"/>
         </action>
