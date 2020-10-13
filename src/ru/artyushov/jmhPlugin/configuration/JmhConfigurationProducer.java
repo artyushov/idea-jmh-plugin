@@ -1,12 +1,11 @@
 package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.execution.actions.ConfigurationContext;
-import com.intellij.execution.configurations.ConfigurationType;
+import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.junit.JavaRunConfigurationProducerBase;
-import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: nikart
@@ -16,13 +15,10 @@ import com.intellij.util.containers.ContainerUtil;
 @SuppressWarnings("UnusedDeclaration")
 public abstract class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
 
-    public JmhConfigurationProducer(ConfigurationType configurationType) {
-        super(configurationType);
-    }
-
-    public JmhConfigurationProducer() {
-        super(ContainerUtil.findInstance(
-                Extensions.getExtensions(ConfigurationType.CONFIGURATION_TYPE_EP), JmhConfigurationType.class));
+    @NotNull
+    @Override
+    public ConfigurationFactory getConfigurationFactory() {
+        return JmhConfigurationType.getInstance().getConfigurationFactories()[0];
     }
 
     @Override

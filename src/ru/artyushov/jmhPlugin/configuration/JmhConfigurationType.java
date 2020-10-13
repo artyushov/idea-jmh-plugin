@@ -1,29 +1,36 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.intellij.execution.configurations.ConfigurationFactory;
-import com.intellij.execution.configurations.ConfigurationTypeBase;
+import com.intellij.execution.configurations.ConfigurationTypeUtil;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.icons.AllIcons;
+import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullLazyValue;
+import org.jetbrains.annotations.NotNull;
+
+import static com.intellij.icons.AllIcons.RunConfigurations.Application;
 
 /**
  * User: nikart
  * Date: 01/05/14
  * Time: 13:46
  */
-public class JmhConfigurationType extends ConfigurationTypeBase {
+public class JmhConfigurationType extends SimpleConfigurationType {
 
     public static final String TYPE_ID = "jmh-id";
 
     public JmhConfigurationType() {
-        super(TYPE_ID, "Jmh", "", AllIcons.RunConfigurations.Application);
-        ConfigurationFactory myFactory = new ConfigurationFactory(this) {
-            public RunConfiguration createTemplateConfiguration(Project project) {
-                JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", project, this);
-                configuration.setPassParentEnvs(true);
-                return configuration;
-            }
-        };
-        addFactory(myFactory);
+        super(TYPE_ID, "Jmh", "Configuration to run a JMH benchmark", NotNullLazyValue.createValue(() -> Application));
+    }
+
+    @Override
+    public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
+        JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", project, this);
+        configuration.setPassParentEnvs(true);
+        return configuration;
+    }
+
+    @NotNull
+    public static JmhConfigurationType getInstance() {
+        return ConfigurationTypeUtil.findConfigurationType(JmhConfigurationType.class);
     }
 }
