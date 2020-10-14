@@ -13,9 +13,7 @@ import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
 import ru.artyushov.jmhPlugin.configuration.JmhConfigurationType;
 
 /**
- * User: nikart
- * Date: 09/04/14
- * Time: 18:45
+ * Supports creating run configurations from context (by right-clicking a code element in the source editor or the project view).
  */
 @SuppressWarnings("UnusedDeclaration")
 public abstract class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
@@ -26,12 +24,28 @@ public abstract class JmhConfigurationProducer extends JavaRunConfigurationProdu
         return JmhConfigurationType.getInstance().getConfigurationFactories()[0];
     }
 
+    /**
+     * Sets up a configuration based on the specified context.
+     *
+     * @param configuration a clone of the template run configuration of the specified type
+     * @param context       contains the information about a location in the source code.
+     * @param sourceElement a reference to the source element for the run configuration (by default contains the element at caret,
+     *                      can be updated by the producer to point to a higher-level element in the tree).
+     * @return true if the context is applicable to this run configuration producer, false if the context is not applicable and the
+     * configuration should be discarded.
+     */
     @Override
-    protected abstract boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context,
-                                                    Ref<PsiElement> sourceElement);
+    protected abstract boolean setupConfigurationFromContext(@NotNull JmhConfiguration configuration, @NotNull ConfigurationContext context, @NotNull Ref<PsiElement> sourceElement);
 
+    /**
+     * Checks if the specified configuration was created from the specified context.
+     *
+     * @param configuration a configuration instance.
+     * @param context       contains the information about a location in the source code.
+     * @return true if this configuration was created from the specified context, false otherwise.
+     */
     @Override
-    public abstract boolean isConfigurationFromContext(JmhConfiguration jmhConfiguration, ConfigurationContext configurationContext);
+    public abstract boolean isConfigurationFromContext(@NotNull JmhConfiguration configuration, @NotNull ConfigurationContext context);
 
     protected boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context, String configurationName) {
         if (!configuration.getName().equals(configurationName)) {
