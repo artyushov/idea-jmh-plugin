@@ -56,22 +56,8 @@ public class JmhMethodConfigurationProducer extends JmhConfigurationProducer {
                 || !method.getContainingClass().getQualifiedName().equals(configuration.getBenchmarkClass())) {
             return false;
         }
-        if (configuration.getName() == null || !configuration.getName().equals(getNameForConfiguration(method))) {
-            return false;
-        }
-        Location locationFromContext = context.getLocation();
-        if (locationFromContext == null) {
-            return false;
-        }
-        Location location = JavaExecutionUtil.stepIntoSingleClass(locationFromContext);
-        final Module originalModule = configuration.getConfigurationModule().getModule();
-        if (location.getModule() == null || !location.getModule().equals(originalModule)) {
-            return false;
-        }
-        setupConfigurationModule(context, configuration);
-        configuration.restoreOriginalModule(originalModule);
-
-        return true;
+        String configurationName = getNameForConfiguration(method);
+        return isConfigurationFromContext(configuration, context, configurationName);
     }
 
     private String getNameForConfiguration(PsiMethod method) {
