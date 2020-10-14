@@ -69,7 +69,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         configuration.restoreOriginalModule(originalModule);
         String generatedParams = toRunParams(benchmarkClass, method);
         configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
-        if (configuration.getWorkingDirectory() == null) { // respect default working directory if set
+        if (configuration.getWorkingDirectory() == null || configuration.getWorkingDirectory().isEmpty()) { // respect default working directory if set
             configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         }
         configuration.setName(getNameForConfiguration(benchmarkClass, method));
