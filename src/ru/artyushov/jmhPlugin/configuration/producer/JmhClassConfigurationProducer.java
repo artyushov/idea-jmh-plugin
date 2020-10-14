@@ -13,6 +13,8 @@ import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
 
 import java.util.Iterator;
 
+import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.CLASS;
+
 /**
  * User: nikart
  * Date: 15/07/14
@@ -34,27 +36,30 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
         configuration.setProgramParameters(
-                createProgramParameters(benchmarkClass.getQualifiedName() + ".*", configuration.getProgramParameters()));
+                createProgramParameters(toRunParams(benchmarkClass), configuration.getProgramParameters()));
         configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
-        configuration.setName(benchmarkClass.getName());
-        configuration.setType(JmhConfiguration.Type.CLASS);
+        configuration.setName(getNameForConfiguration(benchmarkClass));
+        configuration.setType(CLASS);
         return true;
     }
 
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        if (configuration.getBenchmarkType() != CLASS) {
+            return false;
+        }
         if (ConfigurationUtils.getAnnotatedMethod(context) != null) {
             return false;
         }
-        if (configuration.getBenchmarkType() != JmhConfiguration.Type.CLASS) {
-            return false;
-        }
         PsiClass benchmarkClass = getBenchmarkClass(context);
-        if (benchmarkClass == null || benchmarkClass.getQualifiedName() == null ||
-                !benchmarkClass.getQualifiedName().equals(configuration.getBenchmarkClass())) {
+        if (benchmarkClass == null) {
             return false;
         }
-        String configurationName = benchmarkClass.getName();
+        if (benchmarkClass.getQualifiedName() == null
+                || !benchmarkClass.getQualifiedName().equals(configuration.getBenchmarkClass())) {
+            return false;
+        }
+        String configurationName = getNameForConfiguration(benchmarkClass);
         return isConfigurationFromContext(configuration, context, configurationName);
     }
 
@@ -79,5 +84,13 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
             }
         }
         return false;
+    }
+
+    private String getNameForConfiguration(PsiClass benchmarkClass) {
+        return benchmarkClass.getName();
+    }
+
+    private String toRunParams(PsiClass benchmarkClass) {
+        return benchmarkClass.getQualifiedName() + ".*";
     }
 }
