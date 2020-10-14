@@ -12,8 +12,16 @@
 
     <change-notes><![CDATA[
       <ul>
+        <li>v1.1
+      <ul>
          <li>Enable setting JVM options in runtime configuration</li>
          <li>Add gutter icons for benchmark methods and containing class</li>
+             <li>Workaround for "Exception while trying to acquire the JMH lock (C:\WINDOWS\/jmh.lock)"</li>
+             <li>Ask user to enable annotation processor</li>
+             <li>Support of Modern IntelliJ, Android Studio and change icon for run configuration</li>
+             <li>Thanks to Sergey Sitnikov, Michal Vala, Daniel Knittl-Frank, joserobjr and Beck Chen for contribution</li>
+          <ul>
+        </li>
       <ul>
     ]]>
     </change-notes>
@@ -27,12 +35,6 @@
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationProducer"/>
         <runLineMarkerContributor language="JAVA" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
     </extensions>
-
-    <application-components>
-    </application-components>
-
-    <project-components>
-    </project-components>
 
     <actions>
         <action id="generateMicroBenchmark" class="ru.artyushov.jmhPlugin.action.GenerateMicroBenchmarkAction"
