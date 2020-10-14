@@ -20,7 +20,8 @@ public class ConfigurationUtils {
     public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
 
     public static boolean hasBenchmarks(PsiClass psiClass) {
-        for (PsiMethod method : psiClass.getMethods()) {
+        PsiMethod[] methods = psiClass.getMethods();
+        for (PsiMethod method : methods) {
             if (hasBenchmarkAnnotation(method)) {
                 return true;
             }
@@ -37,25 +38,6 @@ public class ConfigurationUtils {
                 method.getModifierList().findAnnotation(TEAR_DOWN_ANNOTATION) != null;
     }
 
-    public static PsiMethod getAnnotatedMethod(ConfigurationContext context) {
-        Location<?> location = context.getLocation();
-        if (location == null) {
-            return null;
-        }
-        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
-        Location<PsiMethod> methodLocation = null;
-        if (iterator.hasNext()) {
-            methodLocation = iterator.next();
-        }
-        if (methodLocation == null) {
-            return null;
-        }
-        PsiMethod method = methodLocation.getPsiElement();
-        if (hasBenchmarkAnnotation(method)) {
-            return method;
-        }
-        return null;
-    }
 
     public static boolean isBenchmarkMethod(PsiElement element) {
         if (!(element instanceof PsiIdentifier))

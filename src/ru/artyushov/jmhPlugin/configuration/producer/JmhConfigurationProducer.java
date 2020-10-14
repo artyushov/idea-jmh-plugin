@@ -13,12 +13,13 @@ import com.intellij.psi.PsiMethod;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.artyushov.jmhPlugin.configuration.ConfigurationUtils;
 import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
 import ru.artyushov.jmhPlugin.configuration.JmhConfigurationType;
 
 import java.util.Iterator;
 
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarks;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.CLASS;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.METHOD;
 
@@ -47,7 +48,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
     protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement) {
         JmhConfiguration.Type runType;
         PsiClass benchmarkClass;
-        PsiMethod method = ConfigurationUtils.getAnnotatedMethod(context);
+        PsiMethod method = getAnnotatedMethod(context);
         if (method == null) {
             benchmarkClass = getBenchmarkClass(context);
             runType = CLASS;
@@ -84,7 +85,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         PsiClass benchmarkClass;
         PsiMethod method;
         if (configuration.getBenchmarkType() == METHOD) {
-            method = ConfigurationUtils.getAnnotatedMethod(context);
+            method = getAnnotatedMethod(context);
             if (method == null) {
                 return false;
             }
@@ -121,6 +122,26 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return true;
     }
 
+    public static PsiMethod getAnnotatedMethod(ConfigurationContext context) {
+        Location<?> location = context.getLocation();
+        if (location == null) {
+            return null;
+        }
+        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
+        Location<PsiMethod> methodLocation = null;
+        if (iterator.hasNext()) {
+            methodLocation = iterator.next();
+        }
+        if (methodLocation == null) {
+            return null;
+        }
+        PsiMethod method = methodLocation.getPsiElement();
+        if (hasBenchmarkAnnotation(method)) {
+            return method;
+        }
+        return null;
+    }
+
     private PsiClass getBenchmarkClass(ConfigurationContext context) {
         Location<?> location = context.getLocation();
         if (location == null) {
@@ -128,7 +149,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         }
         for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
             final Location<PsiClass> classLocation = iterator.next();
-            if (ConfigurationUtils.hasBenchmarks(classLocation.getPsiElement())) {
+            if (hasBenchmarks(classLocation.getPsiElement())) {
                 return classLocation.getPsiElement();
             }
         }
