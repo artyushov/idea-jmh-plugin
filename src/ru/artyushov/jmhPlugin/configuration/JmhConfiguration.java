@@ -182,7 +182,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     @Override
-    public void writeExternal(Element element) throws WriteExternalException {
+    public void writeExternal(@NotNull Element element) throws WriteExternalException {
         super.writeExternal(element);
         if (vmParameters != null) {
             element.setAttribute(ATTR_VM_PARAMETERS, vmParameters);
@@ -203,7 +203,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     @Override
-    public void readExternal(Element element) throws InvalidDataException {
+    public void readExternal(@NotNull Element element) throws InvalidDataException {
         super.readExternal(element);
         setVMParameters(element.getAttributeValue(ATTR_VM_PARAMETERS));
         setProgramParameters(element.getAttributeValue(ATTR_PROGRAM_PARAMETERS));

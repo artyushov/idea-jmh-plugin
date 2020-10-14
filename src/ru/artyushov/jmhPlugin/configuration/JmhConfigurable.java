@@ -25,12 +25,12 @@ public class JmhConfigurable extends SettingsEditor<JmhConfiguration> {
     }
 
     @Override
-    protected void resetEditorFrom(JmhConfiguration jmhConfiguration) {
+    protected void resetEditorFrom(@NotNull JmhConfiguration jmhConfiguration) {
         commonProgramParameters.reset(jmhConfiguration);
     }
 
     @Override
-    protected void applyEditorTo(JmhConfiguration jmhConfiguration) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull JmhConfiguration jmhConfiguration) throws ConfigurationException {
         commonProgramParameters.applyTo(jmhConfiguration);
     }
 

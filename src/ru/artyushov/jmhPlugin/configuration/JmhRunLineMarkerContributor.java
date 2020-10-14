@@ -8,6 +8,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -17,7 +18,7 @@ public class JmhRunLineMarkerContributor extends RunLineMarkerContributor {
 
     @Nullable
     @Override
-    public Info getInfo(PsiElement psiElement) {
+    public Info getInfo(@NotNull PsiElement psiElement) {
         boolean isBenchmarkMethod = ConfigurationUtils.isBenchmarkMethod(psiElement);
         if (isBenchmarkMethod) {
             final AnAction[] actions = ExecutorAction.getActions(0);

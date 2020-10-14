@@ -43,7 +43,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
      * configuration should be discarded.
      */
     @Override
-    protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement) {
+    protected boolean setupConfigurationFromContext(@NotNull JmhConfiguration configuration, ConfigurationContext context, @NotNull Ref<PsiElement> sourceElement) {
         Location locationFromContext = context.getLocation();
         if (locationFromContext == null) {
             return false;
@@ -85,7 +85,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
      * @return true if this configuration was created from the specified context, false otherwise.
      */
     @Override
-    public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+    public boolean isConfigurationFromContext(@NotNull JmhConfiguration configuration, @NotNull ConfigurationContext context) {
         Location locationFromContext = context.getLocation();
         if (locationFromContext == null) {
             return false;

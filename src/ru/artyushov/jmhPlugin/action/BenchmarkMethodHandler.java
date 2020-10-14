@@ -130,7 +130,7 @@ class BenchmarkMethodHandler implements CodeInsightActionHandler {
     private static TemplateEditingAdapter createTemplateAdapter(final Runnable runnable) {
         return new TemplateEditingAdapter() {
             @Override
-            public void templateFinished(Template template, boolean brokenOff) {
+            public void templateFinished(@NotNull Template template, boolean brokenOff) {
                 ApplicationManager.getApplication().runWriteAction(runnable);
             }
         };
