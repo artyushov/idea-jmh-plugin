@@ -25,7 +25,7 @@ import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.METHOD;
 /**
  * Supports creating run configurations from context (by right-clicking a code element in the source editor or the project view).
  */
-public class JmhClassConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
+public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<JmhConfiguration> implements Cloneable {
 
     @NotNull
     @Override
