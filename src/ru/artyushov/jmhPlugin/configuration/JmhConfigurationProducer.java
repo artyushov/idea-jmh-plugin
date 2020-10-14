@@ -1,4 +1,4 @@
-package ru.artyushov.jmhPlugin.configuration.producer;
+package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;

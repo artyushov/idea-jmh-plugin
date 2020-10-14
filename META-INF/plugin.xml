@@ -24,7 +24,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <deadCode implementation="ru.artyushov.jmhPlugin.configuration.JmhEntryPoint"/>
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
-        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.producer.JmhConfigurationProducer"/>
+        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationProducer"/>
         <runLineMarkerContributor language="JAVA" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
     </extensions>
 
