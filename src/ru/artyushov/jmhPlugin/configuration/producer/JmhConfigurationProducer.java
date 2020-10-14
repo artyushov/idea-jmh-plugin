@@ -69,9 +69,11 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
-        configuration.setProgramParameters(
-                createProgramParameters(toRunParams(benchmarkClass, method), configuration.getProgramParameters()));
-        configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
+        String generatedParams = toRunParams(benchmarkClass, method);
+        configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
+        if (configuration.getWorkingDirectory() == null) { // respect default working directory if set
+            configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
+        }
         configuration.setName(getNameForConfiguration(benchmarkClass, method));
         configuration.setType(runType);
         return true;
@@ -104,10 +106,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         } else {
             return false;
         }
-        if (benchmarkClass == null) {
-            return false;
-        }
-        if (benchmarkClass.getQualifiedName() == null
+        if (benchmarkClass == null || benchmarkClass.getQualifiedName() == null
                 || !benchmarkClass.getQualifiedName().equals(configuration.getBenchmarkClass())) {
             return false;
         }
