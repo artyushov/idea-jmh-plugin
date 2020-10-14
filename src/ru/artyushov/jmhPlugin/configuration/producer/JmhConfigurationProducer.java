@@ -1,4 +1,4 @@
-package ru.artyushov.jmhPlugin.configuration;
+package ru.artyushov.jmhPlugin.configuration.producer;
 
 import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;
@@ -9,6 +9,8 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
+import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
+import ru.artyushov.jmhPlugin.configuration.JmhConfigurationType;
 
 /**
  * User: nikart

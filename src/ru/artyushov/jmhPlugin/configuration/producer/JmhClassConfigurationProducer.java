@@ -1,6 +1,5 @@
-package ru.artyushov.jmhPlugin.configuration;
+package ru.artyushov.jmhPlugin.configuration.producer;
 
-import com.intellij.execution.JavaExecutionUtil;
 import com.intellij.execution.Location;
 import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.openapi.module.Module;
@@ -9,6 +8,8 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.PathUtil;
+import ru.artyushov.jmhPlugin.configuration.ConfigurationUtils;
+import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
 
 import java.util.Iterator;
 
