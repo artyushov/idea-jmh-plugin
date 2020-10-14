@@ -16,6 +16,12 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
 
+import static com.intellij.execution.configurations.JavaParameters.CLASSES_AND_TESTS;
+import static com.intellij.execution.configurations.JavaParameters.CLASSES_ONLY;
+import static com.intellij.execution.configurations.JavaParameters.JDK_AND_CLASSES;
+import static com.intellij.execution.configurations.JavaParameters.JDK_AND_CLASSES_AND_TESTS;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT;
+
 /**
  * User: nikart
  * Date: 14/07/14
@@ -30,18 +36,24 @@ public class BenchmarkState extends CommandLineState {
         super(environment);
         this.project = project;
         this.configuration = configuration;
+        automaticallyEnableAnnotationProcessor(configuration);
+    }
+
+    private void automaticallyEnableAnnotationProcessor(JmhConfiguration configuration) {
         Module module = configuration.getConfigurationModule().getModule();
         if (module != null) {
             CompilerConfigurationImpl compilerConfiguration =
                     (CompilerConfigurationImpl) CompilerConfiguration.getInstance(module.getProject());
             ProcessorConfigProfile processorConfigProfile = compilerConfiguration.getAnnotationProcessingConfiguration(module);
-            processorConfigProfile.setEnabled(true);
-            compilerConfiguration.getState();
+            if (!processorConfigProfile.isEnabled()) {
+                processorConfigProfile.setEnabled(true);
+                // refresh compilerConfiguration
+                compilerConfiguration.getState();
+            }
         }
     }
 
     protected JavaParameters createJavaParameters() throws ExecutionException {
-
         JavaParameters parameters = new JavaParameters();
         JavaParametersUtil.configureConfiguration(parameters, configuration);
 
@@ -67,17 +79,17 @@ public class BenchmarkState extends CommandLineState {
     }
 
     private GeneralCommandLine createCommandLine() throws ExecutionException {
-        return CommandLineBuilder.createFromJavaParameters(createJavaParameters(), CommonDataKeys.PROJECT
+        return CommandLineBuilder.createFromJavaParameters(createJavaParameters(), PROJECT
                 .getData(DataManager.getInstance().getDataContext()), true);
     }
 
 
     private int removeJdkClasspath(int classpathType) {
         switch (classpathType) {
-            case JavaParameters.JDK_AND_CLASSES:
-                return JavaParameters.CLASSES_ONLY;
-            case JavaParameters.JDK_AND_CLASSES_AND_TESTS:
-                return JavaParameters.CLASSES_AND_TESTS;
+            case JDK_AND_CLASSES:
+                return CLASSES_ONLY;
+            case JDK_AND_CLASSES_AND_TESTS:
+                return CLASSES_AND_TESTS;
             default:
                 return classpathType;
         }
