@@ -1,13 +1,9 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.intellij.execution.Location;
-import com.intellij.execution.actions.ConfigurationContext;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
-
-import java.util.Iterator;
 
 /**
  * User: nikart
@@ -18,16 +14,6 @@ public class ConfigurationUtils {
 
     public static final String SETUP_ANNOTATION = "org.openjdk.jmh.annotations.Setup";
     public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
-
-    public static boolean hasBenchmarks(PsiClass psiClass) {
-        PsiMethod[] methods = psiClass.getMethods();
-        for (PsiMethod method : methods) {
-            if (hasBenchmarkAnnotation(method)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static boolean hasBenchmarkAnnotation(PsiMethod method) {
         return method.getModifierList().findAnnotation(JmhConfiguration.JMH_ANNOTATION_NAME) != null;
@@ -63,7 +49,7 @@ public class ConfigurationUtils {
         return element instanceof PsiClass && containsBenchmarkMethod((PsiClass) element);
     }
 
-    private static boolean containsBenchmarkMethod(final PsiClass aClass) {
+    public static boolean containsBenchmarkMethod(final PsiClass aClass) {
         final PsiMethod[] methods = aClass.getMethods();
         for (final PsiMethod method : methods) {
             if (isBenchmarkMethod(method)) return true;

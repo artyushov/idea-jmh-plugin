@@ -11,6 +11,9 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.containsBenchmarkMethod;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
+
 /**
  * User: nikart
  * Date: 07/08/14
@@ -36,14 +39,14 @@ public class JmhEntryPoint extends EntryPoint {
     if (isSelected) {
       if (psiElement instanceof PsiClass) {
         final PsiClass aClass = (PsiClass)psiElement;
-        if (ConfigurationUtils.hasBenchmarks(aClass)) {
+        if (containsBenchmarkMethod(aClass)) {
           return true;
         }
       }
 
       if (psiElement instanceof PsiMethod) {
         final PsiMethod method = (PsiMethod)psiElement;
-        if (ConfigurationUtils.hasBenchmarkAnnotation(method)
+        if (isBenchmarkMethod(method)
                 || ConfigurationUtils.hasSetupOrTearDownAnnotation(method)) {
           return true;
         }
