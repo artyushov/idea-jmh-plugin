@@ -6,7 +6,6 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.util.PathUtil;
 import ru.artyushov.jmhPlugin.configuration.ConfigurationUtils;
 import ru.artyushov.jmhPlugin.configuration.JmhConfiguration;
@@ -70,20 +69,11 @@ public class JmhClassConfigurationProducer extends JmhConfigurationProducer {
         }
         for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
             final Location<PsiClass> classLocation = iterator.next();
-            if (hasBenchmarks(classLocation.getPsiElement())) {
+            if (ConfigurationUtils.hasBenchmarks(classLocation.getPsiElement())) {
                 return classLocation.getPsiElement();
             }
         }
         return null;
-    }
-
-    private boolean hasBenchmarks(PsiClass psiClass) {
-        for (PsiMethod method : psiClass.getMethods()) {
-            if (ConfigurationUtils.hasBenchmarkAnnotation(method)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String getNameForConfiguration(PsiClass benchmarkClass) {

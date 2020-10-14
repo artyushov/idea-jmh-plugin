@@ -19,6 +19,15 @@ public class ConfigurationUtils {
     public static final String SETUP_ANNOTATION = "org.openjdk.jmh.annotations.Setup";
     public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
 
+    public static boolean hasBenchmarks(PsiClass psiClass) {
+        for (PsiMethod method : psiClass.getMethods()) {
+            if (hasBenchmarkAnnotation(method)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean hasBenchmarkAnnotation(PsiMethod method) {
         return method.getModifierList().findAnnotation(JmhConfiguration.JMH_ANNOTATION_NAME) != null;
     }

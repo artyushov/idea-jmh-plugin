@@ -36,10 +36,8 @@ public class JmhEntryPoint extends EntryPoint {
     if (isSelected) {
       if (psiElement instanceof PsiClass) {
         final PsiClass aClass = (PsiClass)psiElement;
-        for (PsiMethod psiMethod : aClass.getMethods()) {
-          if (ConfigurationUtils.hasBenchmarkAnnotation(psiMethod)) {
-            return true;
-          }
+        if (ConfigurationUtils.hasBenchmarks(aClass)) {
+          return true;
         }
       }
 
