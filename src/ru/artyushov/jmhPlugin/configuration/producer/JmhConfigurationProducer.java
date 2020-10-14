@@ -46,11 +46,15 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
      */
     @Override
     protected boolean setupConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context, Ref<PsiElement> sourceElement) {
+        Location locationFromContext = context.getLocation();
+        if (locationFromContext == null) {
+            return false;
+        }
         JmhConfiguration.Type runType;
         PsiClass benchmarkClass;
-        PsiMethod method = getAnnotatedMethod(context);
+        PsiMethod method = getAnnotatedMethod(locationFromContext);
         if (method == null) {
-            benchmarkClass = getBenchmarkClass(context);
+            benchmarkClass = getBenchmarkClass(locationFromContext);
             runType = CLASS;
         } else {
             benchmarkClass = method.getContainingClass();
@@ -82,16 +86,20 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
      */
     @Override
     public boolean isConfigurationFromContext(JmhConfiguration configuration, ConfigurationContext context) {
+        Location locationFromContext = context.getLocation();
+        if (locationFromContext == null) {
+            return false;
+        }
         PsiClass benchmarkClass;
         PsiMethod method;
         if (configuration.getBenchmarkType() == METHOD) {
-            method = getAnnotatedMethod(context);
+            method = getAnnotatedMethod(locationFromContext);
             if (method == null) {
                 return false;
             }
             benchmarkClass = method.getContainingClass();
         } else if (configuration.getBenchmarkType() == CLASS) {
-            benchmarkClass = getBenchmarkClass(context);
+            benchmarkClass = getBenchmarkClass(locationFromContext);
             method = null;
         } else {
             return false;
@@ -107,10 +115,6 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         if (!configuration.getName().equals(configurationName)) {
             return false;
         }
-        Location locationFromContext = context.getLocation();
-        if (locationFromContext == null) {
-            return false;
-        }
         Location location = JavaExecutionUtil.stepIntoSingleClass(locationFromContext);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         if (location.getModule() == null || !location.getModule().equals(originalModule)) {
@@ -122,11 +126,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return true;
     }
 
-    public static PsiMethod getAnnotatedMethod(ConfigurationContext context) {
-        Location<?> location = context.getLocation();
-        if (location == null) {
-            return null;
-        }
+    public static PsiMethod getAnnotatedMethod(Location<?> location) {
         Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
         Location<PsiMethod> methodLocation = null;
         if (iterator.hasNext()) {
@@ -142,11 +142,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return null;
     }
 
-    private PsiClass getBenchmarkClass(ConfigurationContext context) {
-        Location<?> location = context.getLocation();
-        if (location == null) {
-            return null;
-        }
+    private PsiClass getBenchmarkClass(Location<?> location) {
         for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
             final Location<PsiClass> classLocation = iterator.next();
             if (hasBenchmarks(classLocation.getPsiElement())) {
