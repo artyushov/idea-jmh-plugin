@@ -7,17 +7,22 @@ import com.intellij.execution.application.BaseJavaApplicationCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.util.JavaParametersUtil;
+import com.intellij.openapi.compiler.CompileStatusNotification;
+import com.intellij.openapi.compiler.CompilerManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.Messages;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
 
 import static com.intellij.execution.configurations.JavaParameters.CLASSES_AND_TESTS;
 import static com.intellij.execution.configurations.JavaParameters.CLASSES_ONLY;
 import static com.intellij.execution.configurations.JavaParameters.JDK_AND_CLASSES;
 import static com.intellij.execution.configurations.JavaParameters.JDK_AND_CLASSES_AND_TESTS;
+import static com.intellij.openapi.ui.Messages.showOkCancelDialog;
 
 /**
  * User: nikart
@@ -38,11 +43,24 @@ public class JmhBenchmarkCommandLineState extends BaseJavaApplicationCommandLine
                     (CompilerConfigurationImpl) CompilerConfiguration.getInstance(module.getProject());
             ProcessorConfigProfile processorConfigProfile = compilerConfiguration.getAnnotationProcessingConfiguration(module);
             if (!processorConfigProfile.isEnabled()) {
+                if (showOkCancelDialog(configuration.getProject(),
+                        "Annotation processing is not enabled but JMH needs to preprocess classes bytecode",
+                        "JMH benchmark should be processed by its Annotation Processor",
+                        "Enable Annotation processing and rebuild", "Skip",
+                        Messages.getQuestionIcon()) != Messages.OK) {
+                    return;
+                }
                 processorConfigProfile.setEnabled(true);
                 // refresh compilerConfiguration
                 compilerConfiguration.getState();
+                rebuild(module);
             }
         }
+    }
+
+    private void rebuild(Module module) {
+        @Nullable CompileStatusNotification notification = (aborted, errors, warnings, compileContext) -> {};
+        CompilerManager.getInstance(module.getProject()).rebuild(notification);
     }
 
     @Override
