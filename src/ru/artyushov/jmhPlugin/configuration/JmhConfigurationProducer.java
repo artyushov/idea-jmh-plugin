@@ -163,7 +163,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return benchmarkClass.getQualifiedName() + '.' + method.getName();
     }
 
-    String createProgramParameters(String generatedParams, String defaultParams) {
-        return defaultParams != null ? generatedParams + ' ' + defaultParams : generatedParams;
+    private String createProgramParameters(String generatedParams, String defaultParams) {
+        return defaultParams != null && !defaultParams.isEmpty() ? generatedParams + ' ' + defaultParams : generatedParams;
     }
 }
