@@ -25,7 +25,6 @@
         <deadCode implementation="ru.artyushov.jmhPlugin.configuration.JmhEntryPoint"/>
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.producer.JmhClassConfigurationProducer"/>
-        <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.producer.JmhMethodConfigurationProducer"/>
         <runLineMarkerContributor language="JAVA" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
     </extensions>
 
