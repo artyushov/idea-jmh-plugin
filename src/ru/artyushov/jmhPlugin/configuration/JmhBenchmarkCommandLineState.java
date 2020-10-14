@@ -27,12 +27,12 @@ import static com.intellij.openapi.actionSystem.CommonDataKeys.PROJECT;
  * Date: 14/07/14
  * Time: 21:36
  */
-public class BenchmarkState extends CommandLineState {
+public class JmhBenchmarkCommandLineState extends CommandLineState {
 
     private final Project project;
     private final JmhConfiguration configuration;
 
-    public BenchmarkState(Project project, JmhConfiguration configuration, ExecutionEnvironment environment) {
+    public JmhBenchmarkCommandLineState(Project project, JmhConfiguration configuration, ExecutionEnvironment environment) {
         super(environment);
         this.project = project;
         this.configuration = configuration;
