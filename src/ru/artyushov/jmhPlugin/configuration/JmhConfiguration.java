@@ -178,7 +178,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment executionEnvironment) throws ExecutionException {
-        return new JmhBenchmarkCommandLineState(getProject(), this, executionEnvironment);
+        return new JmhBenchmarkCommandLineState(executionEnvironment, this);
     }
 
     @Override
