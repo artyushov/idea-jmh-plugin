@@ -38,7 +38,7 @@ public class ConfigurationUtils {
     }
 
     private static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
-        return method.getContainingClass() != null && method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
+        return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
     public static boolean isBenchmarkClass(@NotNull PsiElement psiElement) {
