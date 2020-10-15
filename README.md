@@ -44,7 +44,9 @@ To fix this error, define a `TMP` or `TEMP` environment variable which points to
 Alternatively, specify the JVM argument `java.io.tmpdir` and set it to a writable directory, for instance `-Djava.io.tmpdir=C:\temp`.
 
 ## Develop
-To understand the plugin sources please read [Run Configuration Management](https://jetbrains.org/intellij/sdk/docs/basics/run_configurations/run_configuration_management.html)
+To understand the plugin sources please read 
+* [Run Configurations Architectural Overview](https://jetbrains.org/intellij/sdk/docs/basics/run_configurations.html)
+* [Run Configuration Management](https://jetbrains.org/intellij/sdk/docs/basics/run_configurations/run_configuration_management.html)
 
 ## Related projects
 

@@ -133,6 +133,9 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
             return null;
         }
         PsiMethod method = methodLocation.getPsiElement();
+        if (method.getContainingClass() == null) {
+            return null;
+        }
         if (isBenchmarkMethod(method)) {
             return method;
         }
