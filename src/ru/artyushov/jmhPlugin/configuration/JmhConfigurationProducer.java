@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.Objects;
 
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.containsBenchmarkMethod;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
@@ -104,8 +105,8 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         } else {
             return false;
         }
-        if (benchmarkClass == null || benchmarkClass.getQualifiedName() == null
-                || !benchmarkClass.getQualifiedName().equals(configuration.getBenchmarkClass())) {
+        if (benchmarkClass == null
+                || !Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
             return false;
         }
         String configurationName = getNameForConfiguration(benchmarkClass, method);
