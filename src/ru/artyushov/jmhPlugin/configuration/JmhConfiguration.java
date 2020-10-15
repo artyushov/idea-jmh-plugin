@@ -38,7 +38,6 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     public static final String JMH_START_CLASS = "org.openjdk.jmh.Main";
-    public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.Benchmark";
 
     private String vmParameters;
     private boolean isAlternativeJrePathEnabled = false;

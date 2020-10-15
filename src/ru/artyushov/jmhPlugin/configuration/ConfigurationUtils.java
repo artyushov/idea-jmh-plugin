@@ -15,14 +15,15 @@ public class ConfigurationUtils {
 
     public static final String SETUP_ANNOTATION = "org.openjdk.jmh.annotations.Setup";
     public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
+    public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.Benchmark";
 
     public static boolean hasBenchmarkAnnotation(@NotNull PsiMethod method) {
-        return method.getModifierList().findAnnotation(JmhConfiguration.JMH_ANNOTATION_NAME) != null;
+        return method.hasAnnotation(JMH_ANNOTATION_NAME);
     }
 
     public static boolean hasSetupOrTearDownAnnotation(@NotNull PsiMethod method) {
-        return method.getModifierList().findAnnotation(SETUP_ANNOTATION) != null ||
-                method.getModifierList().findAnnotation(TEAR_DOWN_ANNOTATION) != null;
+        return method.hasAnnotation(SETUP_ANNOTATION) ||
+                method.hasAnnotation(TEAR_DOWN_ANNOTATION);
     }
 
 
