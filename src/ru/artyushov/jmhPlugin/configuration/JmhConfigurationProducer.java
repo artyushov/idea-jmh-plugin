@@ -95,17 +95,29 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         if (locationFromContext == null) {
             return false;
         }
+        PsiElement benchmarkEntry = findBenchmarkEntry(locationFromContext.getPsiElement());
         PsiClass benchmarkClass;
-        PsiMethod method;
-        if (configuration.getBenchmarkType() == METHOD) {
-            method = getAnnotatedMethod(locationFromContext);
-            if (method == null) {
+        PsiMethod benchmarkMethod;
+        if (benchmarkEntry instanceof PsiMethod) {
+            benchmarkMethod = (PsiMethod) benchmarkEntry;
+            benchmarkClass = benchmarkMethod.getContainingClass();
+            // if the config is for a whole benchmark class then ignore the method
+            if (configuration.getBenchmarkType() == CLASS) {
+                benchmarkMethod = null;
+            } else if (configuration.getBenchmarkType() != METHOD) {
+                // unexpected BenchmarkType, must be METHOD
                 return false;
             }
-            benchmarkClass = method.getContainingClass();
-        } else if (configuration.getBenchmarkType() == CLASS) {
-            benchmarkClass = getBenchmarkClass(locationFromContext);
-            method = null;
+        } else if (benchmarkEntry instanceof PsiClass) {
+            // if the config is for a specific method but we are on a class then the config can't be applied
+            if (configuration.getBenchmarkType() == METHOD) {
+                return false;
+            } else if (configuration.getBenchmarkType() != CLASS) {
+                // unexpected BenchmarkType, must be CLASS
+                return false;
+            }
+            benchmarkClass = (PsiClass) benchmarkEntry;
+            benchmarkMethod = null;
         } else {
             return false;
         }
@@ -113,7 +125,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
                 || !Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
             return false;
         }
-        String generatedParams = toRunParams(benchmarkClass, method);
+        String generatedParams = toRunParams(benchmarkClass, benchmarkMethod);
         if (configuration.getProgramParameters() == null || configuration.getProgramParameters().isEmpty()
                 || !configuration.getProgramParameters().startsWith(generatedParams)) {
             return false;
@@ -145,37 +157,6 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
             PsiClass klass = (PsiClass) parent;
             if (containsBenchmarkMethod(klass)) {
                 return klass;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static PsiMethod getAnnotatedMethod(Location<?> location) {
-        Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
-        Location<PsiMethod> methodLocation = null;
-        if (iterator.hasNext()) {
-            methodLocation = iterator.next();
-        }
-        if (methodLocation == null) {
-            return null;
-        }
-        PsiMethod method = methodLocation.getPsiElement();
-        if (method.getContainingClass() == null) {
-            return null;
-        }
-        if (isBenchmarkMethod(method)) {
-            return method;
-        }
-        return null;
-    }
-
-    @Nullable
-    private PsiClass getBenchmarkClass(Location<?> location) {
-        for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
-            final Location<PsiClass> classLocation = iterator.next();
-            if (containsBenchmarkMethod(classLocation.getPsiElement())) {
-                return classLocation.getPsiElement();
             }
         }
         return null;
