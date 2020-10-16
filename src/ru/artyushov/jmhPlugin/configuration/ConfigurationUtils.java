@@ -6,9 +6,10 @@ import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
 
-import static com.intellij.psi.util.PsiTreeUtil.findFirstParent;
+import static org.jetbrains.uast.UastUtils.findContaining;
 
 /**
  * User: nikart
@@ -60,21 +61,13 @@ public class ConfigurationUtils {
 
     @Nullable
     static PsiElement findBenchmarkEntry(PsiElement locationElement) {
-        // find a parent method or class
-        PsiElement parent = findFirstParent(locationElement, elem -> elem instanceof PsiMethod || elem instanceof PsiClass);
-        if (parent instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) parent;
-            if (isBenchmarkMethod(method)) {
-                return method;
-            }
-            // if this is not a benchmark method then check if this is a benchmark class
-            parent = method.getContainingClass();
+        UMethod method = findContaining(locationElement, UMethod.class);
+        if (method != null && isBenchmarkMethod(method)) {
+            return method;
         }
-        if (parent instanceof PsiClass) {
-            PsiClass klass = (PsiClass) parent;
-            if (isBenchmarkClass(klass)) {
-                return klass;
-            }
+        UClass klass = findContaining(locationElement, UClass.class);
+        if (klass != null && isBenchmarkClass(klass)) {
+            return klass;
         }
         return null;
     }
