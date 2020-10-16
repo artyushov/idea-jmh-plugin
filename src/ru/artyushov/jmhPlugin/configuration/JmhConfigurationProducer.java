@@ -109,8 +109,9 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
                 || !Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
             return false;
         }
-        String configurationName = getNameForConfiguration(benchmarkClass, method);
-        if (!configuration.getName().equals(configurationName)) {
+        String generatedParams = toRunParams(benchmarkClass, method);
+        if (configuration.getProgramParameters() == null || configuration.getProgramParameters().isEmpty()
+                || !configuration.getProgramParameters().startsWith(generatedParams)) {
             return false;
         }
         Location location = JavaExecutionUtil.stepIntoSingleClass(locationFromContext);
