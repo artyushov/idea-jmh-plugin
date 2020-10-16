@@ -49,17 +49,26 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         if (locationFromContext == null) {
             return false;
         }
-        JmhConfiguration.Type runType;
-        PsiClass benchmarkClass;
-        PsiMethod method = getAnnotatedMethod(locationFromContext);
+        final PsiElement benchmarkEntry;
+        final PsiMethod method = getAnnotatedMethod(locationFromContext);
         if (method == null) {
-            benchmarkClass = getBenchmarkClass(locationFromContext);
-            runType = CLASS;
+            benchmarkEntry = getBenchmarkClass(locationFromContext);
         } else {
-            benchmarkClass = method.getContainingClass();
-            runType = METHOD;
+            benchmarkEntry = method;
         }
-        if (benchmarkClass == null) {
+
+        final JmhConfiguration.Type runType;
+        final PsiClass benchmarkClass;
+        final PsiMethod benchmarkMethod;
+        if (benchmarkEntry instanceof PsiClass) {
+            runType = CLASS;
+            benchmarkClass = (PsiClass) benchmarkEntry;
+            benchmarkMethod = null;
+        } else if (benchmarkEntry instanceof PsiMethod) {
+            runType = METHOD;
+            benchmarkMethod = (PsiMethod) benchmarkEntry;
+            benchmarkClass = benchmarkMethod.getContainingClass();
+        } else {
             return false;
         }
         configuration.setBenchmarkClass(benchmarkClass.getQualifiedName());
@@ -68,12 +77,12 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
-        String generatedParams = toRunParams(benchmarkClass, method);
+        String generatedParams = toRunParams(benchmarkClass, benchmarkMethod);
         configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
         if (configuration.getWorkingDirectory() == null || configuration.getWorkingDirectory().isEmpty()) { // respect default working directory if set
             configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         }
-        configuration.setName(getNameForConfiguration(benchmarkClass, method));
+        configuration.setName(getNameForConfiguration(benchmarkClass, benchmarkMethod));
         configuration.setType(runType);
         return true;
     }
@@ -125,6 +134,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return true;
     }
 
+    @Nullable
     public static PsiMethod getAnnotatedMethod(Location<?> location) {
         Iterator<Location<PsiMethod>> iterator = location.getAncestors(PsiMethod.class, false);
         Location<PsiMethod> methodLocation = null;
@@ -144,6 +154,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return null;
     }
 
+    @Nullable
     private PsiClass getBenchmarkClass(Location<?> location) {
         for (Iterator<Location<PsiClass>> iterator = location.getAncestors(PsiClass.class, false); iterator.hasNext(); ) {
             final Location<PsiClass> classLocation = iterator.next();
