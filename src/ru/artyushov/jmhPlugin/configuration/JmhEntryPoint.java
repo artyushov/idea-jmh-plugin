@@ -11,7 +11,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.containsBenchmarkMethod;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasSetupOrTearDownAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
 
@@ -40,7 +40,7 @@ public class JmhEntryPoint extends EntryPoint {
     if (isSelected) {
       if (psiElement instanceof PsiClass) {
         final PsiClass aClass = (PsiClass)psiElement;
-        if (containsBenchmarkMethod(aClass)) {
+        if (isBenchmarkClass(aClass)) {
           return true;
         }
       } else if (psiElement instanceof PsiMethod) {

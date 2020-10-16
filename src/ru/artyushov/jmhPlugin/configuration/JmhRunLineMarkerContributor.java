@@ -11,6 +11,9 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClassIdentifier;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethodIdentifier;
+
 /**
  * @author Sergey Sitnikov
  */
@@ -19,13 +22,13 @@ public class JmhRunLineMarkerContributor extends RunLineMarkerContributor {
     @Nullable
     @Override
     public Info getInfo(@NotNull PsiElement psiElement) {
-        boolean isBenchmarkMethod = ConfigurationUtils.isBenchmarkMethod(psiElement);
+        boolean isBenchmarkMethod = isBenchmarkMethodIdentifier(psiElement);
         if (isBenchmarkMethod) {
             final AnAction[] actions = ExecutorAction.getActions(0);
             return new Info(AllIcons.RunConfigurations.TestState.Run, new TooltipProvider(actions), actions);
         }
 
-        boolean isBenchmarkClass = ConfigurationUtils.isBenchmarkClass(psiElement);
+        boolean isBenchmarkClass = isBenchmarkClassIdentifier(psiElement);
         if (isBenchmarkClass) {
             final AnAction[] actions = ExecutorAction.getActions(0);
             return new Info(AllIcons.RunConfigurations.TestState.Run_run, new TooltipProvider(actions), actions);

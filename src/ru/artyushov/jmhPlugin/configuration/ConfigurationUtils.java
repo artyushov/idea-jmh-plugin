@@ -30,7 +30,7 @@ public class ConfigurationUtils {
     }
 
 
-    public static boolean isBenchmarkMethod(@NotNull PsiElement element) {
+    public static boolean isBenchmarkMethodIdentifier(@NotNull PsiElement element) {
         if (!(element instanceof PsiIdentifier))
             return false;
 
@@ -45,7 +45,7 @@ public class ConfigurationUtils {
         return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
-    public static boolean isBenchmarkClass(@NotNull PsiElement psiElement) {
+    public static boolean isBenchmarkClassIdentifier(@NotNull PsiElement psiElement) {
         if (!(psiElement instanceof PsiIdentifier))
             return false;
 
@@ -54,10 +54,10 @@ public class ConfigurationUtils {
         if (!(element instanceof PsiClass)) {
             return false;
         }
-        return containsBenchmarkMethod((PsiClass) element);
+        return isBenchmarkClass((PsiClass) element);
     }
 
-    public static boolean containsBenchmarkMethod(@NotNull PsiClass aClass) {
+    public static boolean isBenchmarkClass(@NotNull PsiClass aClass) {
         final PsiMethod[] methods = aClass.getMethods();
         for (final PsiMethod method : methods) {
             if (isBenchmarkMethod(method)) return true;
@@ -79,7 +79,7 @@ public class ConfigurationUtils {
         }
         if (parent instanceof PsiClass) {
             PsiClass klass = (PsiClass) parent;
-            if (containsBenchmarkMethod(klass)) {
+            if (isBenchmarkClass(klass)) {
                 return klass;
             }
         }
