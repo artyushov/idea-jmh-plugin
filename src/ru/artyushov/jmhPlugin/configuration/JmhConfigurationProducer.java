@@ -53,15 +53,12 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
 
         final JmhConfiguration.Type runType;
         final PsiClass benchmarkClass;
-        final PsiMethod benchmarkMethod;
         if (benchmarkEntry instanceof PsiClass) {
             runType = CLASS;
             benchmarkClass = (PsiClass) benchmarkEntry;
-            benchmarkMethod = null;
         } else if (benchmarkEntry instanceof PsiMethod) {
             runType = METHOD;
-            benchmarkMethod = (PsiMethod) benchmarkEntry;
-            benchmarkClass = benchmarkMethod.getContainingClass();
+            benchmarkClass = benchmarkClassOfMethod(benchmarkEntry);
         } else {
             return false;
         }
@@ -96,13 +93,11 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         }
         PsiElement benchmarkEntry = findBenchmarkEntry(locationFromContext.getPsiElement());
         PsiClass benchmarkClass;
-        PsiMethod benchmarkMethod;
         if (benchmarkEntry instanceof PsiMethod) {
-            benchmarkMethod = (PsiMethod) benchmarkEntry;
-            benchmarkClass = benchmarkMethod.getContainingClass();
-            // if the config is for a whole benchmark class then ignore the method
+            benchmarkClass = benchmarkClassOfMethod(benchmarkEntry);
+            // if the config is for a whole benchmark class then ignore the method and use its class as an entry
             if (configuration.getBenchmarkType() == CLASS) {
-                benchmarkMethod = null;
+                benchmarkEntry = benchmarkClass;
             } else if (configuration.getBenchmarkType() != METHOD) {
                 // unexpected BenchmarkType, must be METHOD
                 return false;
@@ -116,7 +111,6 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
                 return false;
             }
             benchmarkClass = (PsiClass) benchmarkEntry;
-            benchmarkMethod = null;
         } else {
             return false;
         }
@@ -184,5 +178,10 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
 
     private String createProgramParameters(String generatedParams, String defaultParams) {
         return defaultParams != null && !defaultParams.isEmpty() ? generatedParams + ' ' + defaultParams : generatedParams;
+    }
+
+    private PsiClass benchmarkClassOfMethod(PsiElement benchmarkEntry) {
+        PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
+        return benchmarkMethod.getContainingClass();
     }
 }
