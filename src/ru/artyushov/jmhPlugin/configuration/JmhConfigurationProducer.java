@@ -14,7 +14,6 @@ import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Iterator;
 import java.util.Objects;
 
 import static com.intellij.psi.util.PsiTreeUtil.findFirstParent;
@@ -72,7 +71,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
-        String generatedParams = toRunParams(benchmarkClass, benchmarkMethod);
+        String generatedParams = toRunParams(benchmarkEntry);
         configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
         if (configuration.getWorkingDirectory() == null || configuration.getWorkingDirectory().isEmpty()) { // respect default working directory if set
             configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
@@ -121,11 +120,11 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         } else {
             return false;
         }
-        if (benchmarkClass == null
-                || !Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
+        //TODO: this check may be skipped because we'll then check ProgramParameters, but it still faster to filter out
+        if (!Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
             return false;
         }
-        String generatedParams = toRunParams(benchmarkClass, benchmarkMethod);
+        String generatedParams = toRunParams(benchmarkEntry);
         if (configuration.getProgramParameters() == null || configuration.getProgramParameters().isEmpty()
                 || !configuration.getProgramParameters().startsWith(generatedParams)) {
             return false;
@@ -169,11 +168,19 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return benchmarkClass.getName() + '.' + method.getName();
     }
 
-    private String toRunParams(@NotNull PsiClass benchmarkClass, @Nullable PsiMethod method) {
-        if (method == null) {
+    @NotNull
+    private String toRunParams(@NotNull PsiElement benchmarkEntry) {
+        if (benchmarkEntry instanceof PsiMethod) {
+            PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
+            PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
+            assert benchmarkClass != null;
+            return benchmarkClass.getQualifiedName() + '.' + benchmarkMethod.getName();
+        } else if (benchmarkEntry instanceof PsiClass) {
+            PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
             return benchmarkClass.getQualifiedName() + ".*";
+        } else {
+            return "";
         }
-        return benchmarkClass.getQualifiedName() + '.' + method.getName();
     }
 
     private String createProgramParameters(String generatedParams, String defaultParams) {
