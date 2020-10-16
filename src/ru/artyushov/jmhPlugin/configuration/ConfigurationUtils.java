@@ -38,7 +38,7 @@ public class ConfigurationUtils {
         return isBenchmarkMethod((PsiMethod) element);
     }
 
-    private static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
+    public static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
         return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
