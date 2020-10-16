@@ -49,13 +49,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         if (locationFromContext == null) {
             return false;
         }
-        final PsiElement benchmarkEntry;
-        final PsiMethod method = getAnnotatedMethod(locationFromContext);
-        if (method == null) {
-            benchmarkEntry = getBenchmarkClass(locationFromContext);
-        } else {
-            benchmarkEntry = method;
-        }
+        final PsiElement benchmarkEntry = findBenchmarkEntry(locationFromContext);
 
         final JmhConfiguration.Type runType;
         final PsiClass benchmarkClass;
@@ -132,6 +126,18 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         configuration.restoreOriginalModule(originalModule);
 
         return true;
+    }
+
+    @Nullable
+    private PsiElement findBenchmarkEntry(Location locationFromContext) {
+        final PsiElement benchmarkEntry;
+        final PsiMethod method = getAnnotatedMethod(locationFromContext);
+        if (method == null) {
+            benchmarkEntry = getBenchmarkClass(locationFromContext);
+        } else {
+            benchmarkEntry = method;
+        }
+        return benchmarkEntry;
     }
 
     @Nullable
