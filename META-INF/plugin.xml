@@ -33,7 +33,7 @@
         <deadCode implementation="ru.artyushov.jmhPlugin.configuration.JmhEntryPoint"/>
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationProducer"/>
-        <runLineMarkerContributor language="JAVA" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
+        <runLineMarkerContributor language="UAST" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
     </extensions>
 
     <actions>

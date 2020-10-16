@@ -2,10 +2,11 @@ package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiIdentifier;
 import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.uast.UClass;
+import org.jetbrains.uast.UMethod;
 
 import static com.intellij.psi.util.PsiTreeUtil.findFirstParent;
 
@@ -24,42 +25,34 @@ public class ConfigurationUtils {
         return method.hasAnnotation(JMH_ANNOTATION_NAME);
     }
 
+    public static boolean hasBenchmarkAnnotation(@NotNull UMethod method) {
+        return method.hasAnnotation(JMH_ANNOTATION_NAME);
+    }
+
     public static boolean hasSetupOrTearDownAnnotation(@NotNull PsiMethod method) {
         return method.hasAnnotation(SETUP_ANNOTATION) ||
                 method.hasAnnotation(TEAR_DOWN_ANNOTATION);
-    }
-
-
-    public static boolean isBenchmarkMethodIdentifier(@NotNull PsiElement element) {
-        if (!(element instanceof PsiIdentifier))
-            return false;
-
-        element = element.getParent();
-        if (!(element instanceof PsiMethod))
-            return false;
-
-        return isBenchmarkMethod((PsiMethod) element);
     }
 
     public static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
         return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
-    public static boolean isBenchmarkClassIdentifier(@NotNull PsiElement psiElement) {
-        if (!(psiElement instanceof PsiIdentifier))
-            return false;
-
-        final PsiElement element = psiElement.getParent();
-
-        if (!(element instanceof PsiClass)) {
-            return false;
-        }
-        return isBenchmarkClass((PsiClass) element);
+    public static boolean isBenchmarkMethod(@NotNull UMethod method) {
+        return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
 
     public static boolean isBenchmarkClass(@NotNull PsiClass aClass) {
         final PsiMethod[] methods = aClass.getMethods();
         for (final PsiMethod method : methods) {
+            if (isBenchmarkMethod(method)) return true;
+        }
+        return false;
+    }
+
+    public static boolean isBenchmarkClass(@NotNull UClass aClass) {
+        final UMethod[] methods = aClass.getMethods();
+        for (final UMethod method : methods) {
             if (isBenchmarkMethod(method)) return true;
         }
         return false;
