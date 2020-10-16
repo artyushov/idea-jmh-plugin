@@ -12,13 +12,10 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import static com.intellij.psi.util.PsiTreeUtil.findFirstParent;
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.containsBenchmarkMethod;
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.findBenchmarkEntry;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.CLASS;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.METHOD;
 
@@ -132,27 +129,6 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         configuration.restoreOriginalModule(originalModule);
 
         return true;
-    }
-
-    @Nullable
-    private PsiElement findBenchmarkEntry(PsiElement locationElement) {
-        // find a parent method or class
-        PsiElement parent = findFirstParent(locationElement, elem -> elem instanceof PsiMethod || elem instanceof PsiClass);
-        if (parent instanceof PsiMethod) {
-            PsiMethod method = (PsiMethod) parent;
-            if (isBenchmarkMethod(method)) {
-                return method;
-            }
-            // if this is not a benchmark method then check if this is a benchmark class
-            parent = method.getContainingClass();
-        }
-        if (parent instanceof PsiClass) {
-            PsiClass klass = (PsiClass) parent;
-            if (containsBenchmarkMethod(klass)) {
-                return klass;
-            }
-        }
-        return null;
     }
 
     private String getNameForConfiguration(@NotNull PsiElement benchmarkEntry) {
