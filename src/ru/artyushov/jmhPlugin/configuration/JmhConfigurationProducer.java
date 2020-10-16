@@ -67,16 +67,16 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         }
         configuration.setBenchmarkClass(benchmarkClass.getQualifiedName());
 
-        sourceElement.set(benchmarkClass);
+        sourceElement.set(benchmarkEntry);
         setupConfigurationModule(context, configuration);
         final Module originalModule = configuration.getConfigurationModule().getModule();
         configuration.restoreOriginalModule(originalModule);
-        String generatedParams = toRunParams(benchmarkEntry);
+        String generatedParams = toRunParams(benchmarkEntry, true);
         configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
         if (configuration.getWorkingDirectory() == null || configuration.getWorkingDirectory().isEmpty()) { // respect default working directory if set
             configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
         }
-        configuration.setName(getNameForConfiguration(benchmarkClass, benchmarkMethod));
+        configuration.setName(getNameForConfiguration(benchmarkEntry));
         configuration.setType(runType);
         return true;
     }
@@ -124,7 +124,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         if (!Objects.equals(benchmarkClass.getQualifiedName(), configuration.getBenchmarkClass())) {
             return false;
         }
-        String generatedParams = toRunParams(benchmarkEntry);
+        String generatedParams = toRunParams(benchmarkEntry, true);
         if (configuration.getProgramParameters() == null || configuration.getProgramParameters().isEmpty()
                 || !configuration.getProgramParameters().startsWith(generatedParams)) {
             return false;
@@ -161,23 +161,22 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         return null;
     }
 
-    private String getNameForConfiguration(@NotNull PsiClass benchmarkClass, @Nullable PsiMethod method) {
-        if (method == null) {
-            return benchmarkClass.getName();
-        }
-        return benchmarkClass.getName() + '.' + method.getName();
+    private String getNameForConfiguration(@NotNull PsiElement benchmarkEntry) {
+        return toRunParams(benchmarkEntry, false);
     }
 
     @NotNull
-    private String toRunParams(@NotNull PsiElement benchmarkEntry) {
+    private String toRunParams(@NotNull PsiElement benchmarkEntry, boolean fqn) {
         if (benchmarkEntry instanceof PsiMethod) {
             PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
             PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
             assert benchmarkClass != null;
-            return benchmarkClass.getQualifiedName() + '.' + benchmarkMethod.getName();
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + '.' + benchmarkMethod.getName();
         } else if (benchmarkEntry instanceof PsiClass) {
             PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
-            return benchmarkClass.getQualifiedName() + ".*";
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + ".*";
         } else {
             return "";
         }
