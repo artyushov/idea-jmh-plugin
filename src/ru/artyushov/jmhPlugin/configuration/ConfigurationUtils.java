@@ -35,6 +35,11 @@ public class ConfigurationUtils {
                 method.hasAnnotation(TEAR_DOWN_ANNOTATION);
     }
 
+    public static boolean hasSetupOrTearDownAnnotation(@NotNull UMethod method) {
+        return method.hasAnnotation(SETUP_ANNOTATION) ||
+                method.hasAnnotation(TEAR_DOWN_ANNOTATION);
+    }
+
     public static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
         return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
     }
