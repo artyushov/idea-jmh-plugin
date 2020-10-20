@@ -7,15 +7,21 @@
 
     <description><![CDATA[
       <p>Plugin for generating and running JMH benchmarks from your IDE</p>
-      <p><a href="https://github.com/stokito/IdeaJol">Source code on GitHub</a></p>
+      <p><a href="https://github.com/artyushov/idea-jmh-plugin">Source code on GitHub</a></p>
     ]]></description>
 
     <change-notes><![CDATA[
       <ul>
+        <li>v1.2 Migrate to UAST
+          <ul>
+             <li>Kotlin support</li>
+             <li>Code inspections for basic benchmarks errors</li>
+          <ul>
+        </li>
         <li>v1.1
-      <ul>
-         <li>Enable setting JVM options in runtime configuration</li>
-         <li>Add gutter icons for benchmark methods and containing class</li>
+          <ul>
+             <li>Enable setting JVM options in runtime configuration</li>
+             <li>Add gutter icons for benchmark methods and containing class</li>
              <li>Workaround for "Exception while trying to acquire the JMH lock (C:\WINDOWS\/jmh.lock)"</li>
              <li>Ask user to enable annotation processor</li>
              <li>Support of Modern IntelliJ, Android Studio and change icon for run configuration</li>
