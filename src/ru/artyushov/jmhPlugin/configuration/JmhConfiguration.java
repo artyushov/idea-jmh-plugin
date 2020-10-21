@@ -198,7 +198,6 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (benchmarkClass != null) {
             element.setAttribute(ATTR_BENCHMARK_CLASS, benchmarkClass);
         }
-        writeModule(element);
     }
 
     @Override
