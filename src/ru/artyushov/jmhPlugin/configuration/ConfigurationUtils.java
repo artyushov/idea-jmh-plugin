@@ -21,6 +21,11 @@ public class ConfigurationUtils {
     public static final String SETUP_ANNOTATION = "org.openjdk.jmh.annotations.Setup";
     public static final String TEAR_DOWN_ANNOTATION = "org.openjdk.jmh.annotations.TearDown";
     public static final String JMH_ANNOTATION_NAME = "org.openjdk.jmh.annotations.Benchmark";
+    public static final String JMH_ANNOTATION_STATE = "org.openjdk.jmh.annotations.State";
+
+    public static boolean hasStateAnnotation(@NotNull UClass aClass) {
+        return aClass.hasAnnotation(JMH_ANNOTATION_STATE);
+    }
 
     public static boolean hasBenchmarkAnnotation(@NotNull PsiMethod method) {
         return method.hasAnnotation(JMH_ANNOTATION_NAME);
