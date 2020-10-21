@@ -72,10 +72,4 @@ public class JmhEntryPoint extends EntryPoint {
   public void writeExternal(Element element) throws WriteExternalException {
     element.setAttribute("isSelected", isSelected + "");
   }
-
-  @Nullable
-  @Override
-  public String[] getIgnoreAnnotations() {
-    return super.getIgnoreAnnotations();
-  }
 }

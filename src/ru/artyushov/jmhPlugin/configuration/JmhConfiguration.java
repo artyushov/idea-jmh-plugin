@@ -11,13 +11,23 @@ import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiMethod;
+import com.intellij.refactoring.listeners.RefactoringElementAdapter;
+import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.uast.UClass;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
 
 /**
  * User: nikart
@@ -25,7 +35,7 @@ import java.util.Map;
  * Time: 18:46
  */
 public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule, Object>
-        implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile {
+        implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile, RefactoringListenerProvider {
 
     public static final String ATTR_VM_PARAMETERS = "vm-parameters";
     public static final String ATTR_PROGRAM_PARAMETERS = "program-parameters";
@@ -218,4 +228,52 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     public boolean mustBeStoppedToRun(@NotNull RunConfiguration configuration) {
         return JmhConfigurationType.TYPE_ID.equals(configuration.getType().getId());
     }
+
+
+    @Nullable
+    @Override
+    public RefactoringElementListener getRefactoringElementListener(PsiElement element) {
+        if (StringUtil.isEmpty(getProgramParameters())) {
+            return null;
+        }
+        if (!(
+                (element instanceof PsiMethod && hasBenchmarkAnnotation((PsiMethod) element))
+                        || (element instanceof PsiClass && isBenchmarkClass((PsiClass) element))
+        )) {
+            return null;
+        }
+        if (!getProgramParameters().equals(toRunParams(element, true))) {
+            return null;
+        }
+        return new RefactoringElementAdapter() {
+            @Override
+            protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                setProgramParameters(toRunParams(element, true));
+            }
+
+            @Override
+            public void undoElementMovedOrRenamed(@NotNull PsiElement newElement, @NotNull String oldQualifiedName) {
+                elementRenamedOrMoved(newElement);
+            }
+        };
+    }
+
+    @NotNull
+    private String toRunParams(@NotNull PsiElement benchmarkEntry, boolean fqn) {
+        if (benchmarkEntry instanceof PsiMethod) {
+            PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
+            PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
+            assert benchmarkClass != null;
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + '.' + benchmarkMethod.getName();
+        } else if (benchmarkEntry instanceof PsiClass) {
+            PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + ".*";
+        } else {
+            return "";
+        }
+    }
+
+
 }
