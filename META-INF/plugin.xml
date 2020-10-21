@@ -34,14 +34,14 @@
         <configurationType implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationType"/>
         <runConfigurationProducer implementation="ru.artyushov.jmhPlugin.configuration.JmhConfigurationProducer"/>
         <runLineMarkerContributor language="UAST" implementationClass="ru.artyushov.jmhPlugin.configuration.JmhRunLineMarkerContributor"/>
-        <localInspection shortName="JmhBenchMethodInvalidSignature"
-                         displayName="@Benchmark, @Setup and @TearDown: method should be public"
+        <localInspection shortName="JmhInspections"
+                         displayName="Check that JMH benchmark has a proper structure"
                          groupPath="Java"
                          groupName="JMH"
                          enabledByDefault="true"
                          language="UAST"
                          level="ERROR"
-                         implementationClass="ru.artyushov.jmhPlugin.inspection.JmhBenchMethodInvalidSignatureInspection"/>
+                         implementationClass="ru.artyushov.jmhPlugin.inspection.JmhInspections"/>
     </extensions>
 
     <actions>

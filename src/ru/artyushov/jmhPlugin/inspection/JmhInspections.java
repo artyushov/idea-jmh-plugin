@@ -22,9 +22,12 @@ import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchma
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasSetupOrTearDownAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasStateAnnotation;
 
-public class JmhBenchMethodInvalidSignatureInspection extends AbstractBaseUastLocalInspectionTool {
+public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
     private static final LocalQuickFix BENCH_METHOD_QUICK_FIX = new BenchMethodSignatureFix();
 
+    /**
+     * For performance reasons all checks are executed in one method
+     */
     @Override
     public @Nullable ProblemDescriptor[] checkClass(@NotNull UClass klass, @NotNull InspectionManager manager, boolean isOnTheFly) {
         boolean isBenchmarkClass = false;
@@ -46,6 +49,10 @@ public class JmhBenchMethodInvalidSignatureInspection extends AbstractBaseUastLo
                 isBenchmarkClass = true;
                 if (!method.hasModifierProperty(PUBLIC)) {
                     ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method should be public", BENCH_METHOD_QUICK_FIX, ERROR, isOnTheFly);
+                    return new ProblemDescriptor[]{problem};
+                }
+                if (method.hasModifierProperty(ABSTRACT)) {
+                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method can not be abstract", BENCH_METHOD_QUICK_FIX, ERROR, isOnTheFly);
                     return new ProblemDescriptor[]{problem};
                 }
             }
