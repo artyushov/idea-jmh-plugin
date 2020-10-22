@@ -7,6 +7,7 @@ import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UClass;
@@ -19,6 +20,7 @@ import static com.intellij.codeInspection.ProblemHighlightType.ERROR;
 import static com.intellij.psi.PsiModifier.ABSTRACT;
 import static com.intellij.psi.PsiModifier.FINAL;
 import static com.intellij.psi.PsiModifier.PUBLIC;
+import static com.intellij.psi.PsiModifier.STATIC;
 import static com.intellij.psi.PsiType.VOID;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.JMH_ANNOTATION_STATE;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
@@ -31,7 +33,8 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
      * For performance reasons all checks are executed in one method
      */
     @Override
-    public @Nullable ProblemDescriptor[] checkClass(@NotNull UClass klass, @NotNull InspectionManager manager, boolean isOnTheFly) {
+    public @Nullable
+    ProblemDescriptor[] checkClass(@NotNull UClass klass, @NotNull InspectionManager manager, boolean isOnTheFly) {
         boolean isBenchmarkClass = false;
         UMethod[] methods = klass.getMethods();
         for (UMethod method : methods) {
@@ -63,10 +66,18 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
             }
         }
 
+        boolean explicitState = hasStateAnnotation(klass);
+        // validate if enclosing class is implicit @State
+        if (explicitState) {
+            ProblemDescriptor problem = validateState(klass, manager, isOnTheFly);
+            if (problem != null) {
+                return new ProblemDescriptor[]{problem};
+            }
+        }
+
         if (!isBenchmarkClass) {
             return null;
         }
-        boolean explicitState = hasStateAnnotation(klass);
         // validate against rogue fields
         if (!explicitState || klass.hasModifierProperty(ABSTRACT)) {
             for (UField field : klass.getFields()) {
@@ -91,6 +102,46 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
             return new ProblemDescriptor[]{problem};
         }
 
+        return null;
+    }
+
+    private ProblemDescriptor validateState(UClass stateClass, InspectionManager manager, boolean isOnTheFly) {
+        if (!stateClass.hasModifierProperty(PUBLIC)) {
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(stateClass, PUBLIC, true, true);
+            return manager.createProblemDescriptor(stateClass, "The instantiated @State annotation only supports public classes", fix, ERROR, isOnTheFly);
+        }
+        if (stateClass.isFinal()) {
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(stateClass, FINAL, false, true);
+            return manager.createProblemDescriptor(stateClass, "The instantiated @State annotation does not support final classes", fix, ERROR, isOnTheFly);
+        }
+        // is inner class
+        if (stateClass.getContainingClass() != null && !stateClass.isStatic()) {
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(stateClass, STATIC, true, true);
+            return manager.createProblemDescriptor(stateClass, "The instantiated @State annotation does not support inner classes, make sure your class is static", fix, ERROR, isOnTheFly);
+        }
+        if (stateClass.hasModifierProperty(ABSTRACT)) {
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(stateClass, ABSTRACT, false, true);
+            return manager.createProblemDescriptor(stateClass, "The instantiated @State class cannot be abstract", fix, ERROR, isOnTheFly);
+        }
+        PsiMethod[] constructors = stateClass.getConstructors();
+        // if no any constructors then implicit default constructor exists
+        boolean hasDefaultConstructor = constructors.length == 0;
+        if (!hasDefaultConstructor) {
+            for (PsiMethod constructor : constructors) {
+                if (constructor.getParameterList().isEmpty()) {
+                    hasDefaultConstructor = true;
+                    if (!constructor.hasModifierProperty(PUBLIC)) {
+                        LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(constructor, PUBLIC, true, true);
+                        return manager.createProblemDescriptor(constructor, "For @State class the default constructor must be public", fix, ERROR, isOnTheFly);
+                    }
+                    break;
+                }
+            }
+        }
+        if (!hasDefaultConstructor) {
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createAddDefaultConstructorFix(stateClass);
+            return manager.createProblemDescriptor(stateClass, "The @State annotation can only be applied to the classes having the default public constructor", fix, ERROR, isOnTheFly);
+        }
         return null;
     }
 
