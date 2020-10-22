@@ -10,11 +10,11 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
-import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
+import static com.intellij.openapi.util.text.StringUtil.isEmpty;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.findBenchmarkEntry;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.CLASS;
@@ -68,8 +68,8 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
         configuration.restoreOriginalModule(originalModule);
         String generatedParams = toRunParams(benchmarkEntry, true);
         configuration.setProgramParameters(createProgramParameters(generatedParams, configuration.getProgramParameters()));
-        if (configuration.getWorkingDirectory() == null || configuration.getWorkingDirectory().isEmpty()) { // respect default working directory if set
-            configuration.setWorkingDirectory(PathUtil.getLocalPath(context.getProject().getBaseDir()));
+        if (isEmpty(configuration.getWorkingDirectory())) { // respect default working directory if set
+            configuration.setWorkingDirectory("$MODULE_WORKING_DIR$");
         }
         configuration.setName(getNameForConfiguration(benchmarkEntry));
         configuration.setType(runType);
@@ -117,7 +117,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
             return false;
         }
         String generatedParams = toRunParams(benchmarkEntry, true);
-        if (configuration.getProgramParameters() == null || configuration.getProgramParameters().isEmpty()
+        if (isEmpty(configuration.getProgramParameters())
                 || !configuration.getProgramParameters().startsWith(generatedParams)) {
             return false;
         }
@@ -137,7 +137,7 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
     }
 
     private String createProgramParameters(String generatedParams, String defaultParams) {
-        return defaultParams != null && !defaultParams.isEmpty() ? generatedParams + ' ' + defaultParams : generatedParams;
+        return isEmpty(defaultParams) ? generatedParams : generatedParams + ' ' + defaultParams;
     }
 
     private PsiClass benchmarkClassOfMethod(PsiElement benchmarkEntry) {
