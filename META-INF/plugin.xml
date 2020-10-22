@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/artyushov/idea-jmh-plugin">
     <id>ru.artyushov</id>
     <name>JMH Java Microbenchmark Harness</name>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <vendor email="nikita.artyushov@gmail.com" url="https://github.com/artyushov/idea-jmh-plugin">Nikita Artyushov</vendor>
     <category>Profiling</category>
 
@@ -14,8 +14,9 @@
       <ul>
         <li>v1.2 Migrate to UAST
           <ul>
-             <li>Kotlin support</li>
+             <li>Basic Kotlin support</li>
              <li>Code inspections for basic benchmarks errors</li>
+             <li>Rename benchmark support</li>
           <ul>
         </li>
         <li>v1.1
