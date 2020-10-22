@@ -4,16 +4,13 @@ import com.intellij.codeInspection.reference.EntryPoint;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasSetupOrTearDownAnnotation;
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkEntryElement;
 
 /**
  * User: nikart
@@ -38,17 +35,8 @@ public class JmhEntryPoint extends EntryPoint {
   @Override
   public boolean isEntryPoint(@NotNull PsiElement psiElement) {
     if (isSelected) {
-      if (psiElement instanceof PsiClass) {
-        final PsiClass aClass = (PsiClass)psiElement;
-        if (isBenchmarkClass(aClass)) {
-          return true;
-        }
-      } else if (psiElement instanceof PsiMethod) {
-        final PsiMethod method = (PsiMethod)psiElement;
-        if (isBenchmarkMethod(method) || hasSetupOrTearDownAnnotation(method)) {
-          return true;
-        }
-      }
+      return isBenchmarkEntryElement(psiElement)
+              || ((psiElement instanceof PsiMethod) && hasSetupOrTearDownAnnotation((PsiMethod) psiElement));
     }
     return false;
   }
