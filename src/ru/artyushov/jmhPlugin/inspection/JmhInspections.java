@@ -1,9 +1,11 @@
 package ru.artyushov.jmhPlugin.inspection;
 
 import com.intellij.codeInsight.intention.AddAnnotationFix;
+import com.intellij.codeInsight.intention.QuickFixFactory;
 import com.intellij.codeInspection.AbstractBaseUastLocalInspectionTool;
 import com.intellij.codeInspection.InspectionManager;
 import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.codeInspection.ProblemDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -15,6 +17,7 @@ import java.util.Objects;
 
 import static com.intellij.codeInspection.ProblemHighlightType.ERROR;
 import static com.intellij.psi.PsiModifier.ABSTRACT;
+import static com.intellij.psi.PsiModifier.FINAL;
 import static com.intellij.psi.PsiModifier.PUBLIC;
 import static com.intellij.psi.PsiType.VOID;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.JMH_ANNOTATION_STATE;
@@ -23,7 +26,6 @@ import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasSetupOr
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasStateAnnotation;
 
 public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
-    private static final LocalQuickFix BENCH_METHOD_QUICK_FIX = new BenchMethodSignatureFix();
 
     /**
      * For performance reasons all checks are executed in one method
@@ -40,7 +42,8 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
                 if (hasSetupOrTearDownAnnotation) {
                     // Check that Setup or TearDown is void
                     if ((method.getReturnType() == null || !method.getReturnType().equals(VOID))) {
-                        ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Setup or @TearDown method should not return anything", BENCH_METHOD_QUICK_FIX, ERROR, isOnTheFly);
+                        LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createMethodReturnFix(method, VOID, false);
+                        ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Setup or @TearDown method should not return anything", fix, ERROR, isOnTheFly);
                         return new ProblemDescriptor[]{problem};
                     }
                 }
@@ -48,11 +51,13 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
             if (hasBenchmarkAnnotation || hasSetupOrTearDownAnnotation) {
                 isBenchmarkClass = true;
                 if (!method.hasModifierProperty(PUBLIC)) {
-                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method should be public", BENCH_METHOD_QUICK_FIX, ERROR, isOnTheFly);
+                    LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(method, PUBLIC, true, false);
+                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method should be public", fix, ERROR, isOnTheFly);
                     return new ProblemDescriptor[]{problem};
                 }
                 if (method.hasModifierProperty(ABSTRACT)) {
-                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method can not be abstract", BENCH_METHOD_QUICK_FIX, ERROR, isOnTheFly);
+                    LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(method, ABSTRACT, false, false);
+                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method can not be abstract", fix, ERROR, isOnTheFly);
                     return new ProblemDescriptor[]{problem};
                 }
             }
@@ -75,13 +80,14 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
 
         // if this is a default package
         if (Objects.equals(klass.getName(), klass.getQualifiedName())) {
-//            QuickFixFactory.getInstance().createCreateClassOrPackageFix(aClass, "@State missing", )
+            //TODO QuickFixFactory.getInstance().createCreateClassOrPackageFix(aClass, "Create package", )
             ProblemDescriptor problem = manager.createProblemDescriptor(klass, "Benchmark class should have package other than default", (LocalQuickFix) null, ERROR, isOnTheFly);
             return new ProblemDescriptor[]{problem};
         }
 
         if (klass.isFinal()) {
-            ProblemDescriptor problem = manager.createProblemDescriptor(klass, "Benchmark classes should not be final", (LocalQuickFix) null, ERROR, isOnTheFly);
+            LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(klass, FINAL, false, true);
+            ProblemDescriptor problem = manager.createProblemDescriptor(klass, "Benchmark classes should not be final", fix, ERROR, isOnTheFly);
             return new ProblemDescriptor[]{problem};
         }
 
