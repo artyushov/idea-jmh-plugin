@@ -12,6 +12,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
@@ -238,13 +239,24 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (!isBenchmarkEntryElement(element)) {
             return null;
         }
-        if (!getProgramParameters().equals(toRunParams(element, true))) {
+        if (!getProgramParameters().startsWith(toRunParams(element, true))) {
             return null;
         }
         return new RefactoringElementAdapter() {
             @Override
             protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
-                setProgramParameters(toRunParams(element, true));
+                String newRunParams = toRunParams(newElement, true);
+                int firstSpace = getProgramParameters().indexOf(' ');
+                if (firstSpace == -1) {
+                    setProgramParameters(newRunParams);
+                } else {
+                    setProgramParameters(newRunParams + getProgramParameters().substring(firstSpace));
+                }
+                //TODO smart update name to change only bench name. But we can't do this because we don't know old class name
+                setName(toRunParams(newElement, false));
+                if (newElement instanceof PsiClass) {
+                    setBenchmarkClass(((PsiClass)newElement).getQualifiedName());
+                }
             }
 
             @Override
