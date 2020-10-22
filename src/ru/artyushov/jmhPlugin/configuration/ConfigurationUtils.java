@@ -6,9 +6,9 @@ import com.intellij.psi.PsiMethod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UClass;
-import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
 
+import static com.intellij.psi.PsiModifier.PUBLIC;
 import static org.jetbrains.uast.UastUtils.findContaining;
 
 /**
@@ -46,11 +46,11 @@ public class ConfigurationUtils {
     }
 
     public static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
-        return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
+        return method.hasModifierProperty(PUBLIC) && hasBenchmarkAnnotation(method);
     }
 
     public static boolean isBenchmarkMethod(@NotNull UMethod method) {
-        return method.hasModifierProperty("public") && hasBenchmarkAnnotation(method);
+        return method.hasModifierProperty(PUBLIC) && hasBenchmarkAnnotation(method);
     }
 
     public static boolean isBenchmarkClass(@NotNull PsiClass aClass) {
