@@ -12,15 +12,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
 import com.intellij.refactoring.listeners.RefactoringElementAdapter;
 import com.intellij.refactoring.listeners.RefactoringElementListener;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.uast.UClass;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,6 +25,7 @@ import java.util.Map;
 
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkEntryElement;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
 
 /**
@@ -237,10 +235,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (StringUtil.isEmpty(getProgramParameters())) {
             return null;
         }
-        if (!(
-                (element instanceof PsiMethod && hasBenchmarkAnnotation((PsiMethod) element))
-                        || (element instanceof PsiClass && isBenchmarkClass((PsiClass) element))
-        )) {
+        if (!isBenchmarkEntryElement(element)) {
             return null;
         }
         if (!getProgramParameters().equals(toRunParams(element, true))) {

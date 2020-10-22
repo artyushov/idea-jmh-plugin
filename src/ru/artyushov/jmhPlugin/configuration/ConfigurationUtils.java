@@ -45,6 +45,11 @@ public class ConfigurationUtils {
                 method.hasAnnotation(TEAR_DOWN_ANNOTATION);
     }
 
+    public static boolean isBenchmarkEntryElement(PsiElement element) {
+        return element instanceof PsiMethod && hasBenchmarkAnnotation((PsiMethod) element)
+                || (element instanceof PsiClass && isBenchmarkClass((PsiClass) element));
+    }
+
     public static boolean isBenchmarkMethod(@NotNull PsiMethod method) {
         return method.hasModifierProperty(PUBLIC) && hasBenchmarkAnnotation(method);
     }
