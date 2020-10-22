@@ -81,4 +81,22 @@ public class ConfigurationUtils {
         }
         return null;
     }
+
+    @NotNull
+    public static String toRunParams(@NotNull PsiElement benchmarkEntry, boolean fqn) {
+        if (benchmarkEntry instanceof PsiMethod) {
+            PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
+            PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
+            assert benchmarkClass != null;
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + '.' + benchmarkMethod.getName();
+        } else if (benchmarkEntry instanceof PsiClass) {
+            PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
+            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
+            return benchmarkClassName + ".*";
+        } else {
+            return "";
+        }
+    }
+
 }

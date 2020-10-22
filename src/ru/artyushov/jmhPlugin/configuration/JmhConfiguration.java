@@ -28,6 +28,7 @@ import java.util.Map;
 
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
 
 /**
  * User: nikart
@@ -257,23 +258,5 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
             }
         };
     }
-
-    @NotNull
-    private String toRunParams(@NotNull PsiElement benchmarkEntry, boolean fqn) {
-        if (benchmarkEntry instanceof PsiMethod) {
-            PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
-            PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
-            assert benchmarkClass != null;
-            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
-            return benchmarkClassName + '.' + benchmarkMethod.getName();
-        } else if (benchmarkEntry instanceof PsiClass) {
-            PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
-            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
-            return benchmarkClassName + ".*";
-        } else {
-            return "";
-        }
-    }
-
 
 }

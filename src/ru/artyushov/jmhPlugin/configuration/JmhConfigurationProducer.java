@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.findBenchmarkEntry;
+import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.CLASS;
 import static ru.artyushov.jmhPlugin.configuration.JmhConfiguration.Type.METHOD;
 
@@ -133,23 +134,6 @@ public class JmhConfigurationProducer extends JavaRunConfigurationProducerBase<J
 
     private String getNameForConfiguration(@NotNull PsiElement benchmarkEntry) {
         return toRunParams(benchmarkEntry, false);
-    }
-
-    @NotNull
-    private String toRunParams(@NotNull PsiElement benchmarkEntry, boolean fqn) {
-        if (benchmarkEntry instanceof PsiMethod) {
-            PsiMethod benchmarkMethod = (PsiMethod) benchmarkEntry;
-            PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
-            assert benchmarkClass != null;
-            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
-            return benchmarkClassName + '.' + benchmarkMethod.getName();
-        } else if (benchmarkEntry instanceof PsiClass) {
-            PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
-            String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
-            return benchmarkClassName + ".*";
-        } else {
-            return "";
-        }
     }
 
     private String createProgramParameters(String generatedParams, String defaultParams) {
