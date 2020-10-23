@@ -18,14 +18,10 @@ public class BenchmarkMethodTemplateFactory {
     public static Template create(PsiClass psiClass) {
         Template template = TemplateManager.getInstance(psiClass.getProject()).createTemplate("", "");
         template.addTextSegment("@" + JMH_ANNOTATION_NAME + "\n");
-        template.addTextSegment("public ");
-        Expression typeExpr = new ConstantNode("void");
-        template.addVariable("type", typeExpr, typeExpr, true);
-
-        template.addTextSegment(" measure");
+        template.addTextSegment("public void measure");
         Expression nameExpr = new ConstantNode("Name");
         template.addVariable("name", nameExpr, nameExpr, true);
-        template.addTextSegment("() {\n}");
+        template.addTextSegment("(org.openjdk.jmh.infra.Blackhole bh) {\n}");
 
         template.setToIndent(true);
         template.setToReformat(true);
