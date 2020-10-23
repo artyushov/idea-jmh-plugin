@@ -14,18 +14,18 @@ First of all, you must have `jmh-core` and `jmh-generator-annprocess` on the cla
 After that install the plugin. You can do this directly from IDEA — search for `JMH` in plugin repositories.
 
 Then you can use the plugin the same way you use JUnit. To generate a new benchmark method run `Generate...` action.
-In MacOS it is `Ctrl + N`
+Press `Alt+Insert` or in MacOS `Ctrl + N`.
 Or just right click in your editor pane and select `Generate micro benchmark`.
 
 To run a separate benchmark method move the cursor to the method declaration and invoke `Run` action.
-In MacOS it is `Ctrl + Shift + F10`.
+Press `Ctrl + Shift + F10`.
 Do the same actions to run all the benchmarks in a class, just move your cursor to the class declaration.
 
 Invoking `Run` actions will create a new configuration with default parameters JMH provides.
 If you want to change these parameters just edit this configuration.
 To edit default parameters for all your benchmarks, modify the "JMH" run configuration template.
 
-Please, note that when running a benchmark Annotation processing is automatically enabled in your IDE.
+Please, note that when running a benchmark Annotation processing must be enabled in your IDE.
 
 ### Doesn't it affect the quality of my benchmarks?
 
