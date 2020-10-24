@@ -25,7 +25,7 @@ public class JmhConfigurationType extends SimpleConfigurationType {
     @Override
     public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", project, this);
-        configuration.setPassParentEnvs(true);
+        configuration.setPassParentEnvs(System.getProperty("os.name").startsWith("Windows"));
         return configuration;
     }
 
