@@ -24,8 +24,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
-import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkEntryElement;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
 
@@ -208,6 +206,10 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (benchmarkClass != null) {
             element.setAttribute(ATTR_BENCHMARK_CLASS, benchmarkClass);
         }
+        element.setAttribute("isAlternativeJrePathEnabled", String.valueOf(isAlternativeJrePathEnabled));
+        if (alternativeJrePath != null) {
+            element.setAttribute("alternativeJrePath", alternativeJrePath);
+        }
     }
 
     @Override
@@ -221,6 +223,8 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (typeString != null) {
             setType(Type.valueOf(typeString));
         }
+        setAlternativeJrePathEnabled(Boolean.parseBoolean(element.getAttributeValue("alternativeJrePathEnabled")));
+        setAlternativeJrePath(element.getAttributeValue("alternativeJrePath"));
         readModule(element);
     }
 
@@ -245,6 +249,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         return new RefactoringElementAdapter() {
             @Override
             protected void elementRenamedOrMoved(@NotNull PsiElement newElement) {
+                // replace benchmark class name at beginning of program params
                 String newRunParams = toRunParams(newElement, true);
                 int firstSpace = getProgramParameters().indexOf(' ');
                 if (firstSpace == -1) {
