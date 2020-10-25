@@ -176,7 +176,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
         SettingsEditorGroup<JmhConfiguration> group = new SettingsEditorGroup<JmhConfiguration>();
-        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JmhConfigurable());
+        group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JmhConfigurable(this));
         JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
         group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<JmhConfiguration>());
         return group;
