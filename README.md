@@ -32,6 +32,12 @@ Please, note that when running a benchmark Annotation processing must be enabled
 A brief research shows that benchmark results *are* affected, but not that much. The whole research is described in
 [Research results](./research/results.md). Long story short, the maximum means difference observed was **2.2%**.
 
+### Run Configuration
+
+The following screenshot configures JMH to run the benchmark [`org.openjdk.bench.java.util.UUIDBench.fromString`](https://github.com/openjdk/jdk/blob/master/test/micro/org/openjdk/bench/java/util/UUIDBench.java) using the [async-profiler](https://github.com/jvm-profiling-tools/async-profiler) from a customized `java.library.path`
+
+![Run Configuration](https://user-images.githubusercontent.com/782446/104660736-68b36500-56c7-11eb-9581-84b5e97abe88.png)
+
 ## Common problems
 
 Under Windows the following error might show up:
