@@ -1,7 +1,7 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.intellij.execution.lineMarker.ExecutorAction;
 import com.intellij.execution.lineMarker.RunLineMarkerContributor;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -30,13 +30,15 @@ public class JmhRunLineMarkerContributor extends RunLineMarkerContributor {
         if (uElement instanceof UMethod) {
             boolean isBenchmarkMethod = isBenchmarkMethod((UMethod) uElement);
             if (isBenchmarkMethod) {
-                final AnAction[] actions = ExecutorAction.getActions(0);
+                // FIXME use something similar to com.intellij.sh.run.ShRunFileAction
+                final AnAction[] actions = new AnAction[]{ActionManager.getInstance().getAction("RunClass")};
                 return new Info(ProfileYellow, new TooltipProvider(actions), actions);
             }
         } else if (uElement instanceof UClass) {
             boolean isBenchmarkClass = isBenchmarkClass((UClass) uElement);
             if (isBenchmarkClass) {
-                final AnAction[] actions = ExecutorAction.getActions(0);
+                // FIXME use something similar to com.intellij.sh.run.ShRunFileAction
+                final AnAction[] actions = new AnAction[]{ActionManager.getInstance().getAction("RunClass")};
                 return new Info(ProfileYellow, new TooltipProvider(actions), actions);
             }
         }
