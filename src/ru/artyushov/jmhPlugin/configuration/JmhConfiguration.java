@@ -178,7 +178,6 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         SettingsEditorGroup<JmhConfiguration> group = new SettingsEditorGroup<JmhConfiguration>();
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JmhConfigurable());
         JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
-        group.addEditor(ExecutionBundle.message("logs.tab.title"), new LogConfigurationPanel<JmhConfiguration>());
         return group;
     }
 
