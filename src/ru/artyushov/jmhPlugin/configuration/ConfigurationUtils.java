@@ -94,7 +94,7 @@ public class ConfigurationUtils {
             PsiClass benchmarkClass = benchmarkMethod.getContainingClass();
             assert benchmarkClass != null;
             String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
-            return benchmarkClassName + '.' + benchmarkMethod.getName();
+            return benchmarkClassName + '.' + benchmarkMethod.getName() + "$";
         } else if (benchmarkEntry instanceof PsiClass) {
             PsiClass benchmarkClass = (PsiClass) benchmarkEntry;
             String benchmarkClassName = fqn ? benchmarkClass.getQualifiedName() : benchmarkClass.getName();
