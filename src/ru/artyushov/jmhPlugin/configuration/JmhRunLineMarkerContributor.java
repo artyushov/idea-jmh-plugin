@@ -14,8 +14,7 @@ import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
 import org.jetbrains.uast.UastUtils;
 
-import static com.intellij.icons.AllIcons.RunConfigurations.TestState.Run;
-import static com.intellij.icons.AllIcons.RunConfigurations.TestState.Run_run;
+import static com.intellij.icons.AllIcons.Actions.ProfileYellow;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkClass;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkMethod;
 
@@ -32,13 +31,13 @@ public class JmhRunLineMarkerContributor extends RunLineMarkerContributor {
             boolean isBenchmarkMethod = isBenchmarkMethod((UMethod) uElement);
             if (isBenchmarkMethod) {
                 final AnAction[] actions = ExecutorAction.getActions(0);
-                return new Info(Run, new TooltipProvider(actions), actions);
+                return new Info(ProfileYellow, new TooltipProvider(actions), actions);
             }
         } else if (uElement instanceof UClass) {
             boolean isBenchmarkClass = isBenchmarkClass((UClass) uElement);
             if (isBenchmarkClass) {
                 final AnAction[] actions = ExecutorAction.getActions(0);
-                return new Info(Run_run, new TooltipProvider(actions), actions);
+                return new Info(ProfileYellow, new TooltipProvider(actions), actions);
             }
         }
         return null;
