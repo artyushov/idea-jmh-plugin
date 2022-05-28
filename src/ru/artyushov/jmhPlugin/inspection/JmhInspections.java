@@ -46,7 +46,7 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
                     // Check that Setup or TearDown is void
                     if ((method.getReturnType() == null || !method.getReturnType().equals(VOID))) {
                         LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createMethodReturnFix(method, VOID, false);
-                        ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Setup or @TearDown method should not return anything", fix, ERROR, isOnTheFly);
+                        ProblemDescriptor problem = manager.createProblemDescriptor(method.getIdentifyingElement(), "@Setup or @TearDown method should not return anything", fix, ERROR, isOnTheFly);
                         return new ProblemDescriptor[]{problem};
                     }
                 }
@@ -55,12 +55,12 @@ public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
                 isBenchmarkClass = true;
                 if (!method.hasModifierProperty(PUBLIC)) {
                     LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(method, PUBLIC, true, false);
-                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method should be public", fix, ERROR, isOnTheFly);
+                    ProblemDescriptor problem = manager.createProblemDescriptor(method.getIdentifyingElement(), "@Benchmark method should be public", fix, ERROR, isOnTheFly);
                     return new ProblemDescriptor[]{problem};
                 }
                 if (method.hasModifierProperty(ABSTRACT)) {
                     LocalQuickFixAndIntentionActionOnPsiElement fix = QuickFixFactory.getInstance().createModifierListFix(method, ABSTRACT, false, false);
-                    ProblemDescriptor problem = manager.createProblemDescriptor(method, "@Benchmark method can not be abstract", fix, ERROR, isOnTheFly);
+                    ProblemDescriptor problem = manager.createProblemDescriptor(method.getIdentifyingElement(), "@Benchmark method can not be abstract", fix, ERROR, isOnTheFly);
                     return new ProblemDescriptor[]{problem};
                 }
             }
