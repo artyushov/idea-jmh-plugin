@@ -52,7 +52,7 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     private String alternativeJrePath;
     private String programParameters;
     private String workingDirectory;
-    private Map<String, String> envs = new HashMap<String, String>();
+    private Map<String, String> envs = new HashMap<>(0, 1.0f);
     private boolean passParentEnvs;
     private String benchmarkClass;
 
@@ -132,13 +132,13 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
 
     @Override
     public void setEnvs(@NotNull Map<String, String> map) {
-        envs = new HashMap<String, String>(map);
+        envs = new HashMap<>(map);
     }
 
     @NotNull
     @Override
     public Map<String, String> getEnvs() {
-        return new HashMap<String, String>(envs);
+        return new HashMap<>(envs);
     }
 
     @Override
