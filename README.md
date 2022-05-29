@@ -7,6 +7,8 @@ JUnit. Here are the features that are already implemented:
 2. Running a separate `@Benchmark` method
 3. Running all the benchmarks in a class
 
+![quick demo](demo.gif)
+
 ## How do I use this?
 
 First of all, you must have `jmh-core` and `jmh-generator-annprocess` on the classpath of your module.
@@ -59,3 +61,7 @@ To understand the plugin sources please read
  - [Gradle JMH Plugin](https://github.com/melix/jmh-gradle-plugin)
  - [Jenkins JMH Plugin](https://github.com/brianfromoregon/jmh-plugin)
  - [Teamcity JMH Plugin](https://github.com/presidentio/teamcity-plugin-jmh)
+
+## Plugin on JetBrains Marketplace
+
+Please rate the plugin on [Marketplace](https://plugins.jetbrains.com/plugin/7529-jmh-java-microbenchmark-harness)
