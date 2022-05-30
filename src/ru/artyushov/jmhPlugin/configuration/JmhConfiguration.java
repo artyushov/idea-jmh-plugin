@@ -1,16 +1,21 @@
 package ru.artyushov.jmhPlugin.configuration;
 
-import com.intellij.diagnostic.logging.LogConfigurationPanel;
 import com.intellij.execution.*;
+import com.intellij.execution.application.ApplicationConfiguration;
 import com.intellij.execution.configuration.CompatibilityAwareRunProfile;
+import com.intellij.execution.configuration.EnvironmentVariablesComponent;
 import com.intellij.execution.configurations.*;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.util.JavaParametersUtil;
+import com.intellij.execution.util.ProgramParametersUtil;
 import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.options.SettingsEditorGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.InvalidDataException;
 import com.intellij.openapi.util.WriteExternalException;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
@@ -20,9 +25,11 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.isBenchmarkEntryElement;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParams;
@@ -32,7 +39,7 @@ import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.toRunParam
  * Date: 09/04/14
  * Time: 18:46
  */
-public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurationModule, Object>
+public class JmhConfiguration extends JavaRunConfigurationBase
         implements CommonJavaRunConfigurationParameters, CompatibilityAwareRunProfile, RefactoringListenerProvider {
 
     public static final String ATTR_VM_PARAMETERS = "vm-parameters";
@@ -40,6 +47,9 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     public static final String ATTR_WORKING_DIR = "working-dir";
     public static final String ATTR_BENCHMARK_TYPE = "benchmark-type";
     public static final String ATTR_BENCHMARK_CLASS = "benchmark-class";
+    public static final String USE_CLASS_PATH_ONLY = "useClassPathOnly";
+    public static final String ATTR_ALTERNATIVE_JRE_PATH = "alternativeJrePath";
+    public static final String ATTR_IS_ALTERNATIVE_JRE_PATH_ENABLED = "isAlternativeJrePathEnabled";
 
     public enum Type {
         METHOD, CLASS
@@ -54,16 +64,18 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     private String workingDirectory;
     private Map<String, String> envs = new HashMap<>(0, 1.0f);
     private boolean passParentEnvs;
+    private boolean myUseModulePath = true;
+    private ShortenCommandLine myShortenCommandLine;
     private String benchmarkClass;
 
     private Type type;
 
-    public JmhConfiguration(final String name, final Project project, ConfigurationFactory configurationFactory) {
-        this(name, new JavaRunConfigurationModule(project, false), configurationFactory);
+    public JmhConfiguration(String name, @NotNull JavaRunConfigurationModule configurationModule, @NotNull ConfigurationFactory factory) {
+        super(name, configurationModule, factory);
     }
 
-    public JmhConfiguration(String name, JavaRunConfigurationModule configurationModule, ConfigurationFactory factory) {
-        super(name, configurationModule, factory);
+    public JmhConfiguration(@NotNull JavaRunConfigurationModule configurationModule, @NotNull ConfigurationFactory factory) {
+        super(configurationModule, factory);
     }
 
     @Override
@@ -82,18 +94,23 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     @Override
-    public void setAlternativeJrePathEnabled(boolean b) {
-        this.isAlternativeJrePathEnabled = b;
+    public void setAlternativeJrePathEnabled(boolean enabled) {
+        boolean changed = isAlternativeJrePathEnabled != enabled;
+        isAlternativeJrePathEnabled = enabled;
+        ApplicationConfiguration.onAlternativeJreChanged(changed, getProject());
     }
 
     @Override
     public String getAlternativeJrePath() {
-        return alternativeJrePath;
+        return alternativeJrePath != null ? new AlternativeJrePathConverter().fromString(alternativeJrePath) : null;
     }
 
     @Override
-    public void setAlternativeJrePath(String s) {
-        this.alternativeJrePath = s;
+    public void setAlternativeJrePath(String path) {
+        String collapsedPath = path != null ? new AlternativeJrePathConverter().toString(path) : null;
+        boolean changed = !Objects.equals(alternativeJrePath, collapsedPath);
+        alternativeJrePath = collapsedPath;
+        ApplicationConfiguration.onAlternativeJreChanged(changed, getProject());
     }
 
     @Nullable
@@ -151,6 +168,25 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         return passParentEnvs;
     }
 
+    public boolean isUseModulePath() {
+        return myUseModulePath;
+    }
+
+    public void setUseModulePath(boolean useModulePath) {
+        myUseModulePath = useModulePath;
+    }
+
+    @Nullable
+    @Override
+    public ShortenCommandLine getShortenCommandLine() {
+        return myShortenCommandLine;
+    }
+
+    @Override
+    public void setShortenCommandLine(@Nullable ShortenCommandLine shortenCommandLine) {
+        myShortenCommandLine = shortenCommandLine;
+    }
+
     public void setType(Type type) {
         this.type = type;
     }
@@ -168,13 +204,28 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
     }
 
     @Override
+    public void checkConfiguration() throws RuntimeConfigurationException{
+        JavaParametersUtil.checkAlternativeJRE(this);
+        ProgramParametersUtil.checkWorkingDirectoryExist(this, getProject(), getConfigurationModule().getModule());
+    }
+
+    @Override
     public Collection<Module> getValidModules() {
+        try {
+            checkConfiguration();
+        } catch (RuntimeConfigurationError e) {
+            return Arrays.asList(ModuleManager.getInstance(getProject()).getModules());
+        } catch (RuntimeConfigurationException ignored) {
+        }
         return JavaRunConfigurationModule.getModulesForClass(getProject(), getRunClass());
     }
 
     @NotNull
     @Override
     public SettingsEditor<? extends RunConfiguration> getConfigurationEditor() {
+        if (Registry.is("ide.new.run.config", true)) {
+            return new JmhSettingsEditor(this);
+        }
         SettingsEditorGroup<JmhConfiguration> group = new SettingsEditorGroup<JmhConfiguration>();
         group.addEditor(ExecutionBundle.message("run.configuration.configuration.tab.title"), new JmhConfigurable());
         JavaRunConfigurationExtensionManager.getInstance().appendEditors(this, group);
@@ -205,9 +256,12 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (benchmarkClass != null) {
             element.setAttribute(ATTR_BENCHMARK_CLASS, benchmarkClass);
         }
-        element.setAttribute("isAlternativeJrePathEnabled", String.valueOf(isAlternativeJrePathEnabled));
+        element.setAttribute(ATTR_IS_ALTERNATIVE_JRE_PATH_ENABLED, String.valueOf(isAlternativeJrePathEnabled));
         if (alternativeJrePath != null) {
-            element.setAttribute("alternativeJrePath", alternativeJrePath);
+            element.setAttribute(ATTR_ALTERNATIVE_JRE_PATH, alternativeJrePath);
+        }
+        if (!myUseModulePath) {
+            element.addContent(new Element(USE_CLASS_PATH_ONLY));
         }
     }
 
@@ -222,9 +276,12 @@ public class JmhConfiguration extends ModuleBasedConfiguration<JavaRunConfigurat
         if (typeString != null) {
             setType(Type.valueOf(typeString));
         }
-        setAlternativeJrePathEnabled(Boolean.parseBoolean(element.getAttributeValue("alternativeJrePathEnabled")));
-        setAlternativeJrePath(element.getAttributeValue("alternativeJrePath"));
+        setAlternativeJrePathEnabled(Boolean.parseBoolean(element.getAttributeValue(ATTR_IS_ALTERNATIVE_JRE_PATH_ENABLED)));
+        setAlternativeJrePath(element.getAttributeValue(ATTR_ALTERNATIVE_JRE_PATH));
         readModule(element);
+        myUseModulePath = element.getChild(USE_CLASS_PATH_ONLY) == null;
+//        EnvironmentVariablesComponent.readExternal(element, getPersistentData().getEnvs());
+
     }
 
     @Override

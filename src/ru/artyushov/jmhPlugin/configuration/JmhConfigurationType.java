@@ -1,6 +1,7 @@
 package ru.artyushov.jmhPlugin.configuration;
 
 import com.intellij.execution.configurations.ConfigurationTypeUtil;
+import com.intellij.execution.configurations.JavaRunConfigurationModule;
 import com.intellij.execution.configurations.RunConfiguration;
 import com.intellij.execution.configurations.SimpleConfigurationType;
 import com.intellij.openapi.project.Project;
@@ -24,7 +25,7 @@ public class JmhConfigurationType extends SimpleConfigurationType {
 
     @Override
     public @NotNull RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-        JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", project, this);
+        JmhConfiguration configuration = new JmhConfiguration("jmh-configuration-name", new JavaRunConfigurationModule(project, false), this);
         configuration.setPassParentEnvs(System.getProperty("os.name").startsWith("Windows"));
         return configuration;
     }
