@@ -7,6 +7,8 @@
 
     <description><![CDATA[
       <p>Plugin for generating and running JMH benchmarks from your IDE</p>
+      <p><a href="https://github.com/openjdk/jmh">Java Microbenchmark Harness (JMH)</a> is an OpenJDK tool for building, running, and analysing <b>low level</b> benchmarks.</p>
+      <p><b>Note:</b> First, you must generate your own bench project from the JMH artifact and only then you can use the plugin</p>
       <p><a href="https://github.com/artyushov/idea-jmh-plugin">Source code on GitHub</a></p>
     ]]></description>
 
