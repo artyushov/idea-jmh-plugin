@@ -8,6 +8,7 @@ import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.codeInspection.ProblemDescriptor;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.PsiTypes;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.uast.UClass;
@@ -21,13 +22,13 @@ import static com.intellij.psi.PsiModifier.ABSTRACT;
 import static com.intellij.psi.PsiModifier.FINAL;
 import static com.intellij.psi.PsiModifier.PUBLIC;
 import static com.intellij.psi.PsiModifier.STATIC;
-import static com.intellij.psi.PsiType.VOID;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.JMH_ANNOTATION_STATE;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasBenchmarkAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasSetupOrTearDownAnnotation;
 import static ru.artyushov.jmhPlugin.configuration.ConfigurationUtils.hasStateAnnotation;
 
 public class JmhInspections extends AbstractBaseUastLocalInspectionTool {
+    private static com.intellij.psi.PsiType VOID = PsiTypes.voidType();
 
     /**
      * For performance reasons all checks are executed in one method
