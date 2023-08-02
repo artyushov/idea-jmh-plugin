@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.13.1"
+    id("org.jetbrains.intellij") version "1.15.0"
 }
 
 group = "com.github.artyushov.idea-jmh-plugin"
@@ -10,25 +10,22 @@ repositories {
     mavenCentral()
 }
 
-// Configure Gradle IntelliJ Plugin
-// Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-    version.set("2022.3.1")
-    type.set("IC") // Target IDE Platform
+    version.set("2023.2")
+    type.set("IC")
 
     plugins.set(listOf("java"))
 }
 
 tasks {
-    // Set the JVM compatibility versions
     withType<JavaCompile> {
         sourceCompatibility = "17"
         targetCompatibility = "17"
     }
 
     patchPluginXml {
-        sinceBuild.set("223")
-//        untilBuild.set("231.*")
+        sinceBuild.set("232")
+        untilBuild.set("")
     }
 
     signPlugin {
