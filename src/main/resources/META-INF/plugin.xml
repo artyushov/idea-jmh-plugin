@@ -1,7 +1,7 @@
 <idea-plugin url="https://github.com/artyushov/idea-jmh-plugin">
     <id>ru.artyushov</id>
     <name>JMH Java Microbenchmark Harness</name>
-    <version>1.3.0</version>
+    <version>1.4.0</version>
     <vendor email="nikita.artyushov@gmail.com" url="https://github.com/artyushov/idea-jmh-plugin">Nikita Artyushov</vendor>
     <category>Profiling</category>
 
@@ -14,6 +14,7 @@
 
     <change-notes><![CDATA[
       <ul>
+        <li>v1.4.0 Remove usage of a deprecated API</li>
         <li>v1.3.0
           <ul>
              <li>Change gutter icons</li>

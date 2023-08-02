@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.artyushov.idea-jmh-plugin"
-version = "1.4.0-SNAPSHOT"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
