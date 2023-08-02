@@ -7,3 +7,5 @@ out
 *.ear
 .idea/*
 sandbox
+build
+.gradle
