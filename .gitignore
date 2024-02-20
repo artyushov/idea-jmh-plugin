@@ -9,3 +9,6 @@ out
 sandbox
 build
 .gradle
+/gradle
+/gradlew
+/gradlew.bat
